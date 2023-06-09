@@ -36,6 +36,7 @@ public class Map
     public enum MapVersion {
         BrickBuilder,
         v1,
-        v2
+        v2,
+        KitsuneV1
     }
 }

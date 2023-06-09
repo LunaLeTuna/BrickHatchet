@@ -20,6 +20,89 @@ public class MapExporter : MonoBehaviour
             case Map.MapVersion.v2:
                 Export02BRK(map, path, bbData);
                 break;
+            case Map.MapVersion.KitsuneV1:
+                Export01KBF(map, path, bbData);
+                break;
+        }
+    }
+
+    private static void Export01KBF (Map input, string path, bool BrickBuilder = false) {
+        string Version = "Kitsune Engine V1"; // default version
+        //if (BrickBuilder) Version = "BBv1";
+
+        using (StreamWriter s = new StreamWriter(path)) {
+            s.WriteLine(Version); // write version
+            s.WriteLine(); // blank line
+            s.WriteLine($"+AmbientColor {input.AmbientColor.r.ToString(CultureInfo.InvariantCulture)} {input.AmbientColor.g.ToString(CultureInfo.InvariantCulture)} {input.AmbientColor.b.ToString(CultureInfo.InvariantCulture)}"); // write ambient color
+            s.WriteLine($"+SkyColor {input.SkyColor.r.ToString(CultureInfo.InvariantCulture)} {input.SkyColor.g.ToString(CultureInfo.InvariantCulture)} {input.SkyColor.b.ToString(CultureInfo.InvariantCulture)}"); // write sky color
+            s.WriteLine($"+SunIntensity {input.SunIntensity.ToString(CultureInfo.InvariantCulture)}"); // sun intensity
+            s.WriteLine(); // another blank line
+
+            // now export bricks
+            if (BrickBuilder) {
+                // export groups and brick
+                List<BrickGroup> groupHistory = new List<BrickGroup>();
+                for (int i = 0; i < input.Bricks.Count; i++) {
+                    if (groupHistory.Count > 0) {
+                        // last brick was in a group
+                        if (input.Bricks[i].Parent == groupHistory[groupHistory.Count-1]) {
+                            // this brick is in the same group
+                            s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                        } else if (input.Bricks[i].Parent == null) {
+                            // this brick is not in a group, so we need to end all groups in the history
+                            for (int j = 0; j < groupHistory.Count; j++) {
+                                s.WriteLine(">ENDGROUP");
+                            }
+                            groupHistory.Clear();
+                            s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                        } else {
+                            // this brick is part of a different group
+                            if (groupHistory.Contains(input.Bricks[i].Parent)) {
+                                // brick is in a previous group, end all groups until we reach it
+                                for (int j = groupHistory.Count-1; j > 0; j--) {
+                                    if (groupHistory[j] != input.Bricks[i].Parent) {
+                                        s.WriteLine(">ENDGROUP");
+                                        groupHistory.RemoveAt(j);
+                                    } else {
+                                        // we have ended enough groups
+                                        break;
+                                    }
+                                }
+                                s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                            } else {
+                                // brick is part of a new group
+                                s.WriteLine($">GROUP {input.Bricks[i].Parent.Name}"); // define group
+                                groupHistory.Add(input.Bricks[i].Parent); // add group to history
+                                s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                            }
+                        }
+                    } else {
+                        // last brick was not in a group
+                        if (input.Bricks[i].Parent != null) {
+                            // this brick is in a new group
+                            s.WriteLine($">GROUP {input.Bricks[i].Parent.Name}"); // define group
+                            groupHistory.Add(input.Bricks[i].Parent); // add group to history
+                            s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                        } else {
+                            // this brick isn't in a group either
+                            s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                        }
+                    }
+                }
+            } else {
+                // export bricks
+                for (int i = 0; i < input.Bricks.Count; i++) {
+                    s.WriteLine(ExportBrick(input.Bricks[i]));
+                }
+            }
+
+            // surly removing this will not break export
+            //
+            // for (int i = 0; i < EditorUI.instance.Teams.Count; i++) {
+            //     s.WriteLine(">TEAM " + EditorUI.instance.Teams[i].TeamName);
+            //     Color c = EditorUI.instance.Teams[i].TeamColor;
+            //     s.WriteLine("\t+COLOR " + c.r.ToString(CultureInfo.InvariantCulture) + " " + c.g.ToString(CultureInfo.InvariantCulture) + " " + c.b.ToString(CultureInfo.InvariantCulture));
+            // }
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using QFSW.RichPresence;
+﻿// using QFSW.RichPresence;
 using SFB; // Standalone File Browser
 using System;
 using System.Diagnostics;
@@ -16,12 +16,14 @@ public class EditorMain : MonoBehaviour
     public UnityEvent MapLoaded;
 
     public ExtensionFilter[] OpenMapExtensions = new ExtensionFilter[] {
-        new ExtensionFilter("Brick-Hill Map", new String[] {"brk", "bb"})
+        new ExtensionFilter("Brick-Hill Map", new String[] {"brk", "bb"}),
+        new ExtensionFilter("Kitsune Map", new String[] {"kbf"})
     };
 
     public ExtensionFilter[] SaveMapExtensions = new ExtensionFilter[] {
         new ExtensionFilter("Brick-Hill Map", "brk"),
-        new ExtensionFilter("BrickBuilder Map", "bb")
+        new ExtensionFilter("BrickBuilder Map", "bb"),
+        new ExtensionFilter("Kitsune Map", "kbf")
     };
 
     //public Map.MapVersion ExportVersion;
@@ -41,11 +43,11 @@ public class EditorMain : MonoBehaviour
         ApplySettings();
 
         // create rp
-        if (SettingsManager.Settings.DiscordRP) {
-            gameObject.GetComponent<RichPresenceComponent>().enabled = true;
-        } else {
-            Destroy(gameObject.GetComponent<RichPresenceComponent>()); // delete rp if disabled
-        }
+        // if (SettingsManager.Settings.DiscordRP) {
+        //     gameObject.GetComponent<RichPresenceComponent>().enabled = true;
+        // } else {
+        //     Destroy(gameObject.GetComponent<RichPresenceComponent>()); // delete rp if disabled
+        // }
     }
 
     private void Start() {
@@ -70,9 +72,9 @@ public class EditorMain : MonoBehaviour
         InvokeRepeating("Autosave", SettingsManager.Settings.AutosaveRate * 60, SettingsManager.Settings.AutosaveRate * 60);
 
         //rp
-        if (!MapIsLoaded) {
-            SetRichPresence("Staring at the main menu", "icon", "BrickBuilder Icon");
-        }
+        // if (!MapIsLoaded) {
+        //     SetRichPresence("Staring at the main menu", "icon", "BrickBuilder Icon");
+        // }
     }
 
     public void ApplySettings () {
@@ -130,7 +132,7 @@ public class EditorMain : MonoBehaviour
         MapLoaded.Invoke();
         MapIsLoaded = true;
 
-        SetRichPresence($"Building on '{map.Name}'", "icon", "BrickBuilder Icon");
+        // SetRichPresence($"Building on '{map.Name}'", "icon", "BrickBuilder Icon");
         if (clearHistory) EditorHistory.ClearHistory();
 
         mapStopwatch.Reset();
@@ -143,7 +145,7 @@ public class EditorMain : MonoBehaviour
         //LoadedMap = null;
         MapIsLoaded = false;
 
-        SetRichPresence("Staring at the main menu", "icon", "BrickBuilder Icon");
+        // SetRichPresence("Staring at the main menu", "icon", "BrickBuilder Icon");
     }
 
     public void SaveMap (string path = null, bool bbData = true) {
@@ -156,8 +158,9 @@ public class EditorMain : MonoBehaviour
                 path = savePath;
                 mapStopwatch.Start();
                 string extension = Path.GetExtension(savePath);
-                Map.MapVersion mv = Map.MapVersion.BrickBuilder;
+                Map.MapVersion mv = Map.MapVersion.KitsuneV1;
                 if (extension == ".brk") mv = Map.MapVersion.v2;
+                if (extension == ".bb") mv = Map.MapVersion.BrickBuilder;
                 MapExporter.Export(LoadedMap, savePath, mv, bbData);
                 mapStopwatch.Stop();
                 UnityEngine.Debug.Log($"Saved {LoadedMap.Bricks.Count} bricks in " + mapStopwatch.ElapsedMilliseconds + " ms");
@@ -165,8 +168,9 @@ public class EditorMain : MonoBehaviour
         } else {
             mapStopwatch.Start();
             string extension = Path.GetExtension(path);
-            Map.MapVersion mv = Map.MapVersion.BrickBuilder;
-            if (extension == ".brk") mv = Map.MapVersion.v2;
+            Map.MapVersion mv = Map.MapVersion.KitsuneV1;
+                if (extension == ".brk") mv = Map.MapVersion.v2;
+                if (extension == ".bb") mv = Map.MapVersion.BrickBuilder;
             MapExporter.Export(LoadedMap, path, mv, bbData);
             mapStopwatch.Stop();
             UnityEngine.Debug.Log($"Saved {LoadedMap.Bricks.Count} bricks in " + mapStopwatch.ElapsedMilliseconds + " ms");
@@ -230,16 +234,16 @@ public class EditorMain : MonoBehaviour
 
     // RP
 
-    public void SetRichPresence (string primaryText, string primaryImage, string primaryImageTooltip) {
-        if (RichPresenceComponent.Instance != null) {
-            IRichPresence irp = RichPresenceComponent.Instance.RichPresenceModule;
-            irp.SetPrimaryText(primaryText);
-            irp.SetPrimaryImage(primaryImage);
-            irp.SetPrimaryImageTooltip(primaryImageTooltip);
+    // public void SetRichPresence (string primaryText, string primaryImage, string primaryImageTooltip) {
+    //     if (RichPresenceComponent.Instance != null) {
+    //         IRichPresence irp = RichPresenceComponent.Instance.RichPresenceModule;
+    //         irp.SetPrimaryText(primaryText);
+    //         irp.SetPrimaryImage(primaryImage);
+    //         irp.SetPrimaryImageTooltip(primaryImageTooltip);
 
-            irp.SetTimestamps((int)DateTimeOffset.Now.ToUnixTimeSeconds(), 0);
-        } 
-    }
+    //         irp.SetTimestamps((int)DateTimeOffset.Now.ToUnixTimeSeconds(), 0);
+    //     } 
+    // }
 
     // Window Stuff
     void OnApplicationFocus (bool hasFocus) {
