@@ -635,7 +635,7 @@ public class EditorUI : MonoBehaviour
     public void RemoveHierarchyElement (HierarchyElement element, bool removeFromSelected = true) {
         DeselectHierarchyElement(element, removeFromSelected, false);
         int id = -1;
-        if (element.Type == Map.ElementType.Brick) {
+        if (element.Type == Map.ElementType.Brick || element.Type == Map.ElementType.Light) {
             Brick b = element.AssociatedObject as Brick;
             id = b.ID;
         } else if (element.Type == Map.ElementType.Group) {
@@ -743,7 +743,7 @@ public class EditorUI : MonoBehaviour
 
             SelectedElements.Add(element);
 
-            if(element.Type == Map.ElementType.Brick) {
+            if(element.Type == Map.ElementType.Brick || element.Type == Map.ElementType.Light) {
                 Brick b = element.AssociatedObject as Brick;
                 gizmo.AddTarget(b.gameObject.transform);
                 b.Selected = true;
@@ -879,7 +879,7 @@ public class EditorUI : MonoBehaviour
 
         // add selection to group
         for (int i = 0; i < SelectedElements.Count; i++) {
-            if (SelectedElements[i].Type == Map.ElementType.Brick) {
+            if (SelectedElements[i].Type == Map.ElementType.Brick || SelectedElements[i].Type == Map.ElementType.Light) {
                 Brick b = SelectedElements[i].AssociatedObject as Brick;
                 if (b.Parent == null) { // make sure selected item doesnt already have a parent
                     targetGroup.Children.Add(b.ID);
@@ -1133,7 +1133,25 @@ public class EditorUI : MonoBehaviour
             MismatchedElementsLabel.SetActive(true);
         } else {
             // all the elements are the same type
-            if (lastType == Map.ElementType.Brick) {
+            if (lastType == Map.ElementType.Light) {
+                BrickInspectorElements[0].gameObject.SetActive(true);
+                BrickInspectorElements[1].gameObject.SetActive(true);
+                BrickInspectorElements[4].gameObject.SetActive(true);
+
+                // update the elements
+                Brick b = SelectedElements[0].AssociatedObject as Brick;
+                BrickInspectorElements[0].SetString(b.Name);
+                BrickInspectorElements[1].SetVector3(b.Position);
+                BrickInspectorElements[1].SetExtraLabel(Helper.V3ToBH(b.Position, b.Scale));
+                BrickInspectorElements[2].SetVector3(b.Scale);
+                BrickInspectorElements[3].SetVector3(b.Rotation);
+                BrickInspectorElements[4].SetColor(b.BrickColor, true);
+                colorPicker.SetColor(b.BrickColor, false); // do not invoke color changed event
+                BrickInspectorElements[5].SetInt(Mathf.RoundToInt(b.Transparency * 255));
+                BrickInspectorElements[6].SetDropdown((int)b.Shape);
+                BrickInspectorElements[7].SetBool(b.CollisionEnabled);
+                BrickInspectorElements[8].SetString(b.Model);
+            } else if (lastType == Map.ElementType.Brick) {
                 // show brick properties
                 ShowInspectorElements(1);
 
@@ -1181,7 +1199,37 @@ public class EditorUI : MonoBehaviour
         List<GroupData> modifiedGroups = new List<GroupData>();
 
         for (int i = 0; i < SelectedElements.Count; i++) {
-            if (SelectedElements[i].Type == Map.ElementType.Brick) {
+            if (SelectedElements[i].Type == Map.ElementType.Light) {
+                Brick b = SelectedElements[i].AssociatedObject as Brick;
+                originalBricks.Add(new BrickData(b));
+
+                switch (inspectorElement) {
+                    case 0:
+                        string attemptedName = BrickInspectorElements[0].GetString();
+                        if (string.IsNullOrWhiteSpace(attemptedName)) {
+                            attemptedName = "New Brick";
+                            BrickInspectorElements[0].SetString(attemptedName);
+                        }
+                        b.Name = attemptedName;
+                        UpdateHierarchyElement(SelectedElements[i]);
+                        break;
+                    case 1:
+                        b.Position = BrickInspectorElements[1].GetVector3();
+                        break;
+                        // color is handled by the colorpicker, so this goes ignored
+                        break;
+                }
+
+                modifiedBricks.Add(new BrickData(b));
+
+                if (inspectorElement == 6) {
+                    MapBuilder.instance.UpdateBrickShape(b); // update brick shape
+                } else {
+                    MapBuilder.instance.UpdateBrick(b); // update brick GO
+                }
+                
+
+            }else if (SelectedElements[i].Type == Map.ElementType.Brick || SelectedElements[i].Type == Map.ElementType.Light) {
                 Brick b = SelectedElements[i].AssociatedObject as Brick;
                 originalBricks.Add(new BrickData(b));
 
@@ -1277,7 +1325,7 @@ public class EditorUI : MonoBehaviour
 
     public void UpdateSelectedElements () {
         for (int i = 0; i < SelectedElements.Count; i++) {
-            if (SelectedElements[i].Type == Map.ElementType.Brick) {
+            if (SelectedElements[i].Type == Map.ElementType.Brick || SelectedElements[i].Type == Map.ElementType.Light) {
                 MapBuilder.instance.UpdateBrick(SelectedElements[i].AssociatedObject as Brick);
             }
         }
@@ -1526,7 +1574,7 @@ public class EditorUI : MonoBehaviour
         List<BrickData> removedBricks = new List<BrickData>();
         List<GroupData> removedGroups = new List<GroupData>();
         for (int i = 0; i < SelectedElements.Count; i++) {
-            if (SelectedElements[i].Type == Map.ElementType.Brick) {
+            if (SelectedElements[i].Type == Map.ElementType.Brick || SelectedElements[i].Type == Map.ElementType.Light) {
                 Brick b = SelectedElements[i].AssociatedObject as Brick;
                 removedBricks.Add(new BrickData(b));
                 deleteBrick(b);
