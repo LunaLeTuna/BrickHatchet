@@ -29,6 +29,7 @@ public class Map
 
     public enum ElementType {
         World,
+        Light,
         Brick,
         Group
     }

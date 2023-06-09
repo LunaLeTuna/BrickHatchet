@@ -14,6 +14,7 @@ public class Brick
     public float Transparency = 1f; // Transparency of the brick. This might be able to be replaced with BrickColor.a
     public bool CollisionEnabled = true; // Can you collide with the brick?
     public string Model; // ID of the asset used for the brick
+    public KEType KE_Type; // this determins if it's a prop or maybe a light... could be anything
 
     // bh properties
     public bool is_bh = false;
@@ -79,6 +80,12 @@ public class Brick
         if (MapBuilder.instance.ShapeConstraints.TryGetValue(Shape, out ShapeSizeConstraint ssc)) {
             Scale = Scale.Clamp(ssc.min, ssc.max);
         }
+    }
+
+    public enum KEType {
+        Legacy_Brick,
+        Prop,
+        Light
     }
 
     // plate, corner, corner_inv, and round are not included because:

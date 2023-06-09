@@ -576,8 +576,13 @@ public class EditorUI : MonoBehaviour
             HierarchyElement he = element.GetComponent<HierarchyElement>();
             
 
-            int iconID = 2 + (int)b.Shape;
-            he.Set(Map.ElementType.Brick, HierarchyIcons[iconID], b.Name, element, b);
+            if(b.KE_Type == Brick.KEType.Light){
+                int iconID = 14;
+                he.Set(Map.ElementType.Light, HierarchyIcons[iconID], b.Name, element, b);
+            }else{
+                int iconID = 2 + (int)b.Shape;
+                he.Set(Map.ElementType.Brick, HierarchyIcons[iconID], b.Name, element, b);
+            }
 
             // register click event
             he.SelectionButton.onClick.AddListener(delegate { SelectHierarchyElement(he, true); });
@@ -1381,9 +1386,55 @@ public class EditorUI : MonoBehaviour
         b.Scale = Vector3.one;
         b.BrickColor = Color.gray;
         b.Transparency = 1f;
+        b.KE_Type = Brick.KEType.Legacy_Brick;
         int id = ++main.LoadedMap.lastID;
         b.ID = id;
         MapBuilder.instance.CreateBrickGameObject(b);
+
+        // add brick to map
+        main.LoadedMap.MapElements.Add(id, b);
+        main.LoadedMap.Bricks.Add(b);
+
+        // add brick to hierarchy
+        AddHierarchyElement(b);
+        SelectHierarchyElement(HierarchyElements[id], false, true, false, false, true);
+
+        // add brick to history
+        ElementsAdded ea = new ElementsAdded();
+        ea.type = EditorAction.ActionType.ElementsAdded;
+        ea.bricksAdded = new BrickData[1];
+        ea.bricksAdded[0] = new BrickData(b);
+        EditorHistory.AddToHistory(ea);
+
+        return b;
+    }
+
+    // create new Light (ui button)
+    public void NewLightButton () {
+        NewLight(); // only voids can be called from a ui button so this just calls newbrick and ignores the return
+    }
+
+    // create new Light
+    public Brick NewLight () {
+        // calculate target position
+        Vector3 brickPos = MapBuilder.instance.mainCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f)).Round();
+        // with raycasting
+        RaycastHit hit;
+        if (Physics.Raycast(MapBuilder.instance.mainCam.transform.position, MapBuilder.instance.mainCam.transform.forward, out hit, SelectionDistance, BrickRaycastMask)) {
+            brickPos = hit.point.Round();
+        }
+
+        // create brick object with default values
+        Brick b = new Brick();
+        b.Name = "New Light";
+        b.Position = brickPos;
+        b.Scale = Vector3.one;
+        b.BrickColor = Color.gray;
+        b.Transparency = 1f;
+        b.KE_Type = Brick.KEType.Light;
+        int id = ++main.LoadedMap.lastID;
+        b.ID = id;
+        MapBuilder.instance.CreateBillBoardGameObject(b, 1);
 
         // add brick to map
         main.LoadedMap.MapElements.Add(id, b);

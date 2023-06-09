@@ -21,6 +21,9 @@ public class MapBuilder : MonoBehaviour
     public Shader BrickShader;
     public Shader BrickOutlineShader;
 
+    public GameObject billboard;
+    public Material[] billboardShaders;
+
     public GameObject[] ShapePrefabs;
 
     public Dictionary<Brick.ShapeType, ShapeSizeConstraint> ShapeConstraints = new Dictionary<Brick.ShapeType, ShapeSizeConstraint> {
@@ -108,6 +111,39 @@ public class MapBuilder : MonoBehaviour
             }
             if (submeshCount > 2) brickMaterials[2] = MaterialCache.instance.GetMaterial((source.BrickColor, source.Transparency, MaterialCache.FaceType.Inlet, new Vector2(source.Scale.x, source.Scale.z), BrickShader));
             renderer.materials = brickMaterials;
+        }
+
+        bs.UpdateShape(); // updates the shape
+        source.UpdateModel(); // sets the model
+
+        return brickGameobject;
+    }
+
+    public GameObject CreateBillBoardGameObject (Brick source, int bill) {
+        GameObject brickGameobject = Instantiate(billboard); // get correct shape prefab using enum index
+        brickGameobject.name = source.Name;
+        brickGameobject.layer = 9;
+        source.gameObject = brickGameobject;
+
+        // Set up for BrickGO
+        BrickGO bg = brickGameobject.GetComponent<BrickGO>();
+        bg.brick = source;
+        source.brickGO = bg;
+
+        // Set up the BrickShape
+        BrickShape bs = brickGameobject.GetComponent<BrickShape>();
+        source.brickShape = bs;
+
+        // Set transform info
+        brickGameobject.transform.position = source.Position;
+        brickGameobject.transform.eulerAngles = source.Rotation;
+
+        // Set Material
+        for (int i = 0; i < bs.elements.Length; i++) {
+            MeshFilter mf = bs.elements[i].GetComponent<MeshFilter>();
+            if (mf == null) continue; // skip iteration, this element doesn't have a mesh
+            MeshRenderer renderer = bs.elements[i].GetComponent<MeshRenderer>();
+            renderer.material = billboardShaders[bill];
         }
 
         bs.UpdateShape(); // updates the shape
