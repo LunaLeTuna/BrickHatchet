@@ -298,7 +298,7 @@ public class MapExporter : MonoBehaviour
         string export = $"{bhPos.x.ToString(CultureInfo.InvariantCulture)} {bhPos.y.ToString(CultureInfo.InvariantCulture)} {bhPos.z.ToString(CultureInfo.InvariantCulture)} {bhScale.x.ToString(CultureInfo.InvariantCulture)} {bhScale.y.ToString(CultureInfo.InvariantCulture)} {bhScale.z.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.r.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.g.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.b.ToString(CultureInfo.InvariantCulture)} {b.Transparency.ToString(CultureInfo.InvariantCulture)}";
 
         export += $"\n\t+NAME {b.Name.RemoveNewlines()}"; // brick name
-        if (b.Rotation.x != 0.0 && b.Rotation.y != 0.0 && b.Rotation.z != 0.0) export += $"\n\t+ROT {(b.Rotation.x * -1).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.y * -1).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.z * -1).ToString(CultureInfo.InvariantCulture)}"; // rotation
+        if (b.Rotation.x != 0.0 || b.Rotation.y != 0.0 || b.Rotation.z != 0.0) export += $"\n\t+ROT {(b.Rotation.x).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.y).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.z).ToString(CultureInfo.InvariantCulture)}"; // rotation
         if (!b.CollisionEnabled) export += $"\n\t+NOCOLLISION"; // collision
         if (!string.IsNullOrEmpty(b.Model)) export += $"\n\t+MODEL {b.Model.RemoveNewlines()}"; // model
 
