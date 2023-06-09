@@ -11,17 +11,118 @@ public class MapParser : MonoBehaviour
 {
     
     public static Map Parse (string path) {
-        string extension = Path.GetExtension(path);
-        if (extension.ToLower() == ".brk") {
+        string extension = Path.GetExtension(path).ToLower();
+        if (extension == ".brk") {
             string version = File.ReadAllLines(path)[0];
             if (version.StartsWith("B")) {
                 return Parse02BRK(path);
             } else {
                 return Parse01BRK(path);
             }
+        } else if (extension == ".kbf") {
+            // string version = File.ReadAllLines(path)[0];
+            // if (version.StartsWith("Kitsune Engine V1")) {
+                return Parse02KBFv1(path);
+            // }
         } else {
             return ParseBB(path);
         }
+    }
+
+    private static Map Parse02KBFv1 (string path) {
+        Map map = new Map(); // map that will be outputted
+        string name = Path.GetFileNameWithoutExtension(path);
+        string input = File.ReadAllText(path);
+        string[] lines = input.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries); // split all the lines of the input into separate strings, and remove empty lines
+
+        map.Name = name;
+
+        // the first 7 lines (including whitespace) should be the map info.
+        //map.Version = lines[0]; // this is the line that says which version of workshop the map was created with
+        // map.AmbientColor = Helper.StringToColor(lines[1], true); // for some reason, the ambient color is in BGR format. why?
+        // map.BaseplateColor = Helper.StringToColor(lines[2], true); // same as above
+        // map.SkyColor = Helper.StringToColor(lines[3]); // this however, is RGB. wack
+        // map.BaseplateSize = int.Parse(lines[4], CultureInfo.InvariantCulture);
+        // map.SunIntensity = int.Parse(lines[5], CultureInfo.InvariantCulture);
+
+        int currentID = 0; // this will be incremented when a brick or group is defined
+        List<BrickGroup> startedGroups = new List<BrickGroup>(); // when groups are defined, they are added to this list, and removed when they are ended
+
+        // iterate through lines
+        for (int i = 1; i < lines.Length; i++) {
+            string line = lines[i].Trim(); // get the line without any leading or trailing whitepsaces for easy parsing
+            if (line[0] != '+') {
+                // this line is either defining a new brick or something else that isn't a brick property
+                if (line.StartsWith(">AmbientColor")) {
+                    map.AmbientColor = Helper.StringToColor(line.Substring(14));
+                } else if (line.StartsWith(">SkyColor")) {
+                    map.SkyColor = Helper.StringToColor(line.Substring(10));
+                } else if (line.StartsWith(">SunIntensity")) {
+                    map.SunIntensity = int.Parse(line.Substring(14));
+                } else if (line.StartsWith(">SLOT")) {
+                    // this line is defining an item, but those are history so ignore them
+                    continue;
+                } else if (line.StartsWith(">CAMPOS")) {
+                    // this line is defining the camera position/rotation. this is created by brickbuilder
+                    // TODO
+                } else if (line.StartsWith(">SUNROT")) {
+                    // this line is defining the sun rotation. this is created by brickbuilder.
+                    // TODO
+                } else if (line.StartsWith(">GROUP")) {
+                    // I don't think these work
+                } else if (line.StartsWith(">ENDGROUP")) {
+                    // nor does this 
+                    // will repaste later if do
+                } else if (line[0] != '>') {
+                    // this line is most likely defining a new brick
+                    Brick brick = new Brick();
+                    float[] brickInfo = Helper.StringToFloatArray(line);
+                    brick.Position = new Vector3(brickInfo[0], brickInfo[1], brickInfo[2]); // first 3 numbers are position
+                    brick.Scale = new Vector3(brickInfo[3], brickInfo[4], brickInfo[5]); // next 3 numbers are scale
+                    brick.ConvertTransformToUnity();
+                    brick.BrickColor = new Color(brickInfo[6], brickInfo[7], brickInfo[8]); // next 3 numbers are color
+                    brick.Transparency = brickInfo[9]; // last number is transparency
+                    brick.ID = currentID;
+
+                    if (startedGroups.Count > 0) {
+                        startedGroups[startedGroups.Count - 1].Children.Add(currentID); // there is already an opened group, which means this group is a child of that group
+                        brick.Parent = startedGroups[startedGroups.Count - 1];
+                    }
+
+                    map.Bricks.Add(brick); // adds brick to map object
+                    map.MapElements.Add(currentID, brick);
+                    map.lastID = currentID;
+                    currentID++;
+                }
+            } else {
+                // this line is most likely defining a brick property
+                Brick brick = map.Bricks[map.Bricks.Count - 1]; // get the last added brick
+                if (line.StartsWith("+NAME")) {
+                    // this line is defining the brick name
+                    if (line.Length == 5) {
+                        // the brick doesn't have a name for some reason
+                        brick.Name = "";
+                    } else {
+                        brick.Name = line.Substring(6);
+                    }
+                } else if (line.StartsWith("+ROT")) {
+                    // this line is defining the brick rotation
+                    float[] rotInfo = Helper.StringToFloatArray(line.Substring(5));
+                    brick.Rotation.x = rotInfo[0]%360;
+                    brick.Rotation.y = rotInfo[1]%360;
+                    brick.Rotation.z = rotInfo[2]%360;
+                    if (brick.Rotation.y != 0 && brick.Rotation.y != 180) brick.Scale = brick.Scale.SwapXZ(); // assuming this is post transform conversion
+                } else if (line.StartsWith("+NOCOLLISION")) {
+                    // this line is defining whether or not the brick has collision
+                    brick.CollisionEnabled = false;
+                } else if (line.StartsWith("+MODEL")) {
+                    // this line is defining the custom asset the brick uses
+                    brick.Model = line.Substring(7);
+                }
+            }
+        }
+
+        return map;
     }
 
     private static Map Parse02BRK (string path) {
@@ -129,8 +230,8 @@ public class MapParser : MonoBehaviour
                     }
                 } else if (line.StartsWith("+ROT")) {
                     // this line is defining the brick rotation
-                    brick.Rotation = (int.Parse(line.Substring(5), CultureInfo.InvariantCulture) * -1).Mod(360);
-                    if (brick.Rotation != 0 && brick.Rotation != 180) brick.Scale = brick.Scale.SwapXZ(); // assuming this is post transform conversion
+                    brick.Rotation.y = (float.Parse(line.Substring(5), CultureInfo.InvariantCulture) * -1)%360;
+                    if (brick.Rotation.y != 0 && brick.Rotation.y != 180) brick.Scale = brick.Scale.SwapXZ(); // assuming this is post transform conversion
                 } else if (line.StartsWith("+SHAPE")) {
                     // this line is defining the brick shape
                     brick.Shape = BB.GetShape(line.Substring(7));
@@ -185,7 +286,7 @@ public class MapParser : MonoBehaviour
                 float[] fd = Helper.StringArrayToFloatArray(data, 6);
                 b.Position = new Vector3(fd[0], fd[1], fd[2]);
                 b.Scale = new Vector3(fd[3], fd[4], fd[5]);
-                b.Rotation = int.Parse(data[6], CultureInfo.InvariantCulture);
+                b.Rotation.y = float.Parse(data[6], CultureInfo.InvariantCulture);
                 //b.ConvertTransformToUnity();
                 ColorUtility.TryParseHtmlString("#" + data[7], out Color brickColor);
                 b.BrickColor = brickColor;
@@ -368,7 +469,7 @@ public class MapParser : MonoBehaviour
                         brick.Name = line.Substring(6);
                     }
                 } else if (line.StartsWith("+ROT")) {
-                    brick.Rotation = (int.Parse(line.Substring(5), CultureInfo.InvariantCulture) * -1).Mod(360);
+                    brick.Rotation.y = (float.Parse(line.Substring(5), CultureInfo.InvariantCulture) * -1)%360;
                 } else if (line.StartsWith("+SHAPE")) {
                     brick.Shape = (int)BB.GetShape(line.Substring(7));
                 } else if (line.StartsWith("+NOCOLLISION")) {

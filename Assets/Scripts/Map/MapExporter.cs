@@ -33,9 +33,9 @@ public class MapExporter : MonoBehaviour
         using (StreamWriter s = new StreamWriter(path)) {
             s.WriteLine(Version); // write version
             s.WriteLine(); // blank line
-            s.WriteLine($"+AmbientColor {input.AmbientColor.r.ToString(CultureInfo.InvariantCulture)} {input.AmbientColor.g.ToString(CultureInfo.InvariantCulture)} {input.AmbientColor.b.ToString(CultureInfo.InvariantCulture)}"); // write ambient color
-            s.WriteLine($"+SkyColor {input.SkyColor.r.ToString(CultureInfo.InvariantCulture)} {input.SkyColor.g.ToString(CultureInfo.InvariantCulture)} {input.SkyColor.b.ToString(CultureInfo.InvariantCulture)}"); // write sky color
-            s.WriteLine($"+SunIntensity {input.SunIntensity.ToString(CultureInfo.InvariantCulture)}"); // sun intensity
+            s.WriteLine($">AmbientColor {input.AmbientColor.r.ToString(CultureInfo.InvariantCulture)} {input.AmbientColor.g.ToString(CultureInfo.InvariantCulture)} {input.AmbientColor.b.ToString(CultureInfo.InvariantCulture)}"); // write ambient color
+            s.WriteLine($">SkyColor {input.SkyColor.r.ToString(CultureInfo.InvariantCulture)} {input.SkyColor.g.ToString(CultureInfo.InvariantCulture)} {input.SkyColor.b.ToString(CultureInfo.InvariantCulture)}"); // write sky color
+            s.WriteLine($">SunIntensity {input.SunIntensity.ToString(CultureInfo.InvariantCulture)}"); // sun intensity
             s.WriteLine(); // another blank line
 
             // now export bricks
@@ -47,52 +47,52 @@ public class MapExporter : MonoBehaviour
                         // last brick was in a group
                         if (input.Bricks[i].Parent == groupHistory[groupHistory.Count-1]) {
                             // this brick is in the same group
-                            s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                            s.WriteLine(ExportOBJ(input.Bricks[i])); // export brick
                         } else if (input.Bricks[i].Parent == null) {
                             // this brick is not in a group, so we need to end all groups in the history
                             for (int j = 0; j < groupHistory.Count; j++) {
-                                s.WriteLine(">ENDGROUP");
+                                //s.WriteLine(">ENDGROUP");
                             }
                             groupHistory.Clear();
-                            s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                            s.WriteLine(ExportOBJ(input.Bricks[i])); // export brick
                         } else {
                             // this brick is part of a different group
                             if (groupHistory.Contains(input.Bricks[i].Parent)) {
                                 // brick is in a previous group, end all groups until we reach it
                                 for (int j = groupHistory.Count-1; j > 0; j--) {
                                     if (groupHistory[j] != input.Bricks[i].Parent) {
-                                        s.WriteLine(">ENDGROUP");
+                                        //s.WriteLine(">ENDGROUP");
                                         groupHistory.RemoveAt(j);
                                     } else {
                                         // we have ended enough groups
                                         break;
                                     }
                                 }
-                                s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                                s.WriteLine(ExportOBJ(input.Bricks[i])); // export brick
                             } else {
                                 // brick is part of a new group
-                                s.WriteLine($">GROUP {input.Bricks[i].Parent.Name}"); // define group
+                                //s.WriteLine($">GROUP {input.Bricks[i].Parent.Name}"); // define group
                                 groupHistory.Add(input.Bricks[i].Parent); // add group to history
-                                s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                                s.WriteLine(ExportOBJ(input.Bricks[i])); // export brick
                             }
                         }
                     } else {
                         // last brick was not in a group
                         if (input.Bricks[i].Parent != null) {
                             // this brick is in a new group
-                            s.WriteLine($">GROUP {input.Bricks[i].Parent.Name}"); // define group
+                            //s.WriteLine($">GROUP {input.Bricks[i].Parent.Name}"); // define group
                             groupHistory.Add(input.Bricks[i].Parent); // add group to history
-                            s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                            s.WriteLine(ExportOBJ(input.Bricks[i])); // export brick
                         } else {
                             // this brick isn't in a group either
-                            s.WriteLine(ExportBrick(input.Bricks[i])); // export brick
+                            s.WriteLine(ExportOBJ(input.Bricks[i])); // export brick
                         }
                     }
                 }
             } else {
                 // export bricks
                 for (int i = 0; i < input.Bricks.Count; i++) {
-                    s.WriteLine(ExportBrick(input.Bricks[i]));
+                    s.WriteLine(ExportOBJ(input.Bricks[i]));
                 }
             }
 
@@ -290,15 +290,30 @@ public class MapExporter : MonoBehaviour
         return export;
     }
 
-    private static string ExportBrick (Brick b) {
-        Vector3 bhScale = BB.CorrectScale(b.Scale.SwapYZ(), b.Rotation * -1);
+    private static string ExportOBJ (Brick b) {
+        Vector3 bhScale = BB.CorrectScale(b.Scale.SwapYZ(), Utils.Math.Mod(Mathf.RoundToInt(b.Rotation.y), 360) * -1);
         Vector3 bhPos = b.Position.ToBB(bhScale);
         
         // this is the long line that defines bricks
         string export = $"{bhPos.x.ToString(CultureInfo.InvariantCulture)} {bhPos.y.ToString(CultureInfo.InvariantCulture)} {bhPos.z.ToString(CultureInfo.InvariantCulture)} {bhScale.x.ToString(CultureInfo.InvariantCulture)} {bhScale.y.ToString(CultureInfo.InvariantCulture)} {bhScale.z.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.r.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.g.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.b.ToString(CultureInfo.InvariantCulture)} {b.Transparency.ToString(CultureInfo.InvariantCulture)}";
 
         export += $"\n\t+NAME {b.Name.RemoveNewlines()}"; // brick name
-        if (b.Rotation != 0) export += $"\n\t+ROT {(b.Rotation * -1).ToString(CultureInfo.InvariantCulture)}"; // rotation
+        if (b.Rotation.x != 0.0 && b.Rotation.y != 0.0 && b.Rotation.z != 0.0) export += $"\n\t+ROT {(b.Rotation.x * -1).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.y * -1).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.z * -1).ToString(CultureInfo.InvariantCulture)}"; // rotation
+        if (!b.CollisionEnabled) export += $"\n\t+NOCOLLISION"; // collision
+        if (!string.IsNullOrEmpty(b.Model)) export += $"\n\t+MODEL {b.Model.RemoveNewlines()}"; // model
+
+        return export;
+    }
+
+    private static string ExportBrick (Brick b) {
+        Vector3 bhScale = BB.CorrectScale(b.Scale.SwapYZ(), Utils.Math.Mod(Mathf.RoundToInt(b.Rotation.y), 360) * -1);
+        Vector3 bhPos = b.Position.ToBB(bhScale);
+        
+        // this is the long line that defines bricks
+        string export = $"{bhPos.x.ToString(CultureInfo.InvariantCulture)} {bhPos.y.ToString(CultureInfo.InvariantCulture)} {bhPos.z.ToString(CultureInfo.InvariantCulture)} {bhScale.x.ToString(CultureInfo.InvariantCulture)} {bhScale.y.ToString(CultureInfo.InvariantCulture)} {bhScale.z.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.r.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.g.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.b.ToString(CultureInfo.InvariantCulture)} {b.Transparency.ToString(CultureInfo.InvariantCulture)}";
+
+        export += $"\n\t+NAME {b.Name.RemoveNewlines()}"; // brick name
+        if (b.Rotation.y != 0.0) export += $"\n\t+ROT {(b.Rotation.y * -1).ToString(CultureInfo.InvariantCulture)}"; // rotation
         if (b.Shape != Brick.ShapeType.cube) export += $"\n\t+SHAPE {b.Shape.ToString()}"; // shape
         if (!b.CollisionEnabled) export += $"\n\t+NOCOLLISION"; // collision
         if (!string.IsNullOrEmpty(b.Model)) export += $"\n\t+MODEL {b.Model.RemoveNewlines()}"; // model
@@ -311,7 +326,7 @@ public class MapExporter : MonoBehaviour
     }
 
     private static string ExportBBBrick (Brick b) {
-        string export = $"!{b.Position.x.ToString(CultureInfo.InvariantCulture)} {b.Position.y.ToString(CultureInfo.InvariantCulture)} {b.Position.z.ToString(CultureInfo.InvariantCulture)} {b.Scale.x.ToString(CultureInfo.InvariantCulture)} {b.Scale.y.ToString(CultureInfo.InvariantCulture)} {b.Scale.z.ToString(CultureInfo.InvariantCulture)} {b.Rotation.ToString(CultureInfo.InvariantCulture)} {ColorUtility.ToHtmlStringRGBA(b.BrickColor)} {((int)b.Shape).ToString("x", CultureInfo.InvariantCulture)} {b.Name}";
+        string export = $"!{b.Position.x.ToString(CultureInfo.InvariantCulture)} {b.Position.y.ToString(CultureInfo.InvariantCulture)} {b.Position.z.ToString(CultureInfo.InvariantCulture)} {b.Scale.x.ToString(CultureInfo.InvariantCulture)} {b.Scale.y.ToString(CultureInfo.InvariantCulture)} {b.Scale.z.ToString(CultureInfo.InvariantCulture)} {b.Rotation.y.ToString(CultureInfo.InvariantCulture)} {ColorUtility.ToHtmlStringRGBA(b.BrickColor)} {((int)b.Shape).ToString("x", CultureInfo.InvariantCulture)} {b.Name}";
         if (!b.CollisionEnabled) export += $"\nNOCOLLISION"; // collision
         if (!string.IsNullOrEmpty(b.Model)) export += $"\nMODEL {b.Model.RemoveNewlines()}"; // model
         if (b.Clickable) { // clickable

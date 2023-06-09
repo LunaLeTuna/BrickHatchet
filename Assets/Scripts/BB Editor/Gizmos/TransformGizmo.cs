@@ -225,10 +225,10 @@ namespace RuntimeGizmos
 			DrawQuads(handleSquares.all, GetColor(TransformType.Scale, this.allColor, allColor));
 
             // rotation rings
-			//DrawQuads(circlesLines.all, GetColor(TransformType.Rotate, this.allColor, allColor));
-			//DrawQuads(circlesLines.x, GetColor(TransformType.Rotate, this.xColor, xColor));
+			DrawQuads(circlesLines.all, GetColor(TransformType.Rotate, this.allColor, allColor));
+			DrawQuads(circlesLines.x, GetColor(TransformType.Rotate, this.xColor, xColor));
 			DrawQuads(circlesLines.y, GetColor(TransformType.Rotate, this.yColor, yColor));
-			//DrawQuads(circlesLines.z, GetColor(TransformType.Rotate, this.zColor, zColor));
+			DrawQuads(circlesLines.z, GetColor(TransformType.Rotate, this.zColor, zColor));
 		}
 
         void LoadSettings () {
@@ -531,8 +531,8 @@ namespace RuntimeGizmos
 								target.RotateAround(originalPivot, rotationAxis, rotateAmount);
 							}
 
-                            int rot = Utils.Math.Mod(Mathf.RoundToInt(target.eulerAngles.y), 360);
-                            bgo.brick.Rotation = rot; // set brick rotation
+                            //int rot = Utils.Math.Mod(Mathf.RoundToInt(target.eulerAngles.y), 360);
+                            bgo.brick.Rotation = target.eulerAngles; // set brick rotation
 						}
 
 						totalRotationAmount *= Quaternion.Euler(rotationAxis * rotateAmount);
@@ -1316,10 +1316,10 @@ namespace RuntimeGizmos
 			if(TranslatingTypeContains(TransformType.Rotate))
 			{
 				float circleLength = GetHandleLength(TransformType.Rotate);
-				//AddCircle(pivotPoint, axisInfo.xDirection, circleLength, axisVectors.x);
+				AddCircle(pivotPoint, axisInfo.xDirection, circleLength, axisVectors.x);
 				AddCircle(pivotPoint, axisInfo.yDirection, circleLength, axisVectors.y);
-				//AddCircle(pivotPoint, axisInfo.zDirection, circleLength, axisVectors.z);
-				//AddCircle(pivotPoint, (pivotPoint - transform.position).normalized, circleLength, axisVectors.all, false);
+				AddCircle(pivotPoint, axisInfo.zDirection, circleLength, axisVectors.z);
+				AddCircle(pivotPoint, (pivotPoint - transform.position).normalized, circleLength, axisVectors.all, false);
 			}
 		}
 

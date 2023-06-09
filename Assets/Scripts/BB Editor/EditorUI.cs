@@ -1138,7 +1138,7 @@ public class EditorUI : MonoBehaviour
                 BrickInspectorElements[1].SetVector3(b.Position);
                 BrickInspectorElements[1].SetExtraLabel(Helper.V3ToBH(b.Position, b.Scale));
                 BrickInspectorElements[2].SetVector3(b.Scale);
-                BrickInspectorElements[3].SetInt(b.Rotation);
+                BrickInspectorElements[3].SetVector3(b.Rotation);
                 BrickInspectorElements[4].SetColor(b.BrickColor, true);
                 colorPicker.SetColor(b.BrickColor, false); // do not invoke color changed event
                 BrickInspectorElements[5].SetInt(Mathf.RoundToInt(b.Transparency * 255));
@@ -1199,7 +1199,7 @@ public class EditorUI : MonoBehaviour
                         b.ClampSize();
                         break;
                     case 3:
-                        b.Rotation = BrickInspectorElements[3].GetInt().Mod(360); // keep rotation between 0-359
+                        b.Rotation = BrickInspectorElements[3].GetVector3(); // keep rotation between 0-359
                         break;
                     case 4:
                         // color is handled by the colorpicker, so this goes ignored

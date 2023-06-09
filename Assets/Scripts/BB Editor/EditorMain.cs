@@ -224,7 +224,7 @@ public class EditorMain : MonoBehaviour
         br.Clickable = b.Clickable;
         br.Shape = (Brick.ShapeType)b.Shape;
         br.Model = b.Model;
-        br.ScuffedScale = b.Rotation != 0 && b.Rotation != 180;
+        br.ScuffedScale = b.Rotation.y != 0 && b.Rotation.y != 180;
     }
 
     public void SetGroupProperties (GroupData g, int ID) {

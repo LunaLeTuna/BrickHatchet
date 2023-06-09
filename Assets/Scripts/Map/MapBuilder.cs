@@ -89,7 +89,7 @@ public class MapBuilder : MonoBehaviour
 
         // Set transform info
         brickGameobject.transform.position = source.Position;
-        brickGameobject.transform.eulerAngles = new Vector3(0, source.Rotation, 0);
+        brickGameobject.transform.eulerAngles = source.Rotation;
 
         // Set Material
         for (int i = 0; i < bs.elements.Length; i++) {
@@ -142,7 +142,7 @@ public class MapBuilder : MonoBehaviour
     public void UpdateBrickTransform (Brick b) {
         // Set transform info
         b.gameObject.transform.position = b.Position;
-        b.gameObject.transform.eulerAngles = new Vector3(0, b.Rotation, 0);
+        b.gameObject.transform.eulerAngles = b.Rotation;
 
         //b.CheckIfScuffed(); // unused?
         b.UpdateShape();

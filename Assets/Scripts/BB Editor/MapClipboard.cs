@@ -62,7 +62,7 @@ public struct BrickData {
     public string Name;
     public Vector3 Position;
     public Vector3 Scale;
-    public int Rotation;
+    public Vector3 Rotation;
     public Color BrickColor;
     public float Transparency;
     public bool Collision;
@@ -103,7 +103,7 @@ public struct BrickData {
         b.Model = Model;
         if (includeId) b.ID = ID;
 
-        b.ScuffedScale = b.Rotation != 0 && b.Rotation != 180;
+        b.ScuffedScale = b.Rotation.y != 0 && b.Rotation.y != 180;
         return b;
     }
 
@@ -114,10 +114,10 @@ public struct BrickData {
         Position = pos;
 
         Scale = Scale.SwapYZ();
-        if (Rotation != 0 && Rotation != 180) Scale = Scale.SwapXZ();
+        if (Rotation.y != 0 && Rotation.y != 180) Scale = Scale.SwapXZ();
 
-        Rotation = Rotation * -1; // Invert rotation
-        Rotation = Rotation.Mod(360); // keep rotation between 0-359
+        Rotation.y = Rotation.y * -1; // Invert rotation
+        Rotation.y = Rotation.y%360; // keep rotation between 0-359
     }
 }
 

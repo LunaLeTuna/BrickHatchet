@@ -5,18 +5,21 @@ using Utils;
 [Serializable]
 public class Brick
 {
-    // bh properties
+    // obj properties
     public string Name; // Brick Name
     public Vector3 Position; // XYZ Position
     public Vector3 Scale; // XYZ Scale
-    public int Rotation; // Rotation is along Y (up/down) axis
+    public Vector3 Rotation; // XYZ Rotation
     public Color BrickColor; // Color of the brick.
     public float Transparency = 1f; // Transparency of the brick. This might be able to be replaced with BrickColor.a
     public bool CollisionEnabled = true; // Can you collide with the brick?
+    public string Model; // ID of the asset used for the brick
+
+    // bh properties
+    public bool is_bh = false;
     public bool Clickable = false; // Is the brick clickable?
     public float ClickDistance; // Distance brick can be clicked from
     public ShapeType Shape = ShapeType.cube; // Brick shape
-    public string Model; // ID of the asset used for the brick
 
     // bb properties
     public bool ScuffedScale = false;
@@ -34,10 +37,13 @@ public class Brick
         Position = pos;
 
         Scale = Scale.SwapYZ();
-        if (Rotation != 0 && Rotation != 180) Scale = Scale.SwapXZ();
+        if (Rotation.y != 0 && Rotation.y != 180) Scale = Scale.SwapXZ();
 
-        Rotation = Rotation * -1; // Invert rotation
-        Rotation = Rotation.Mod(360); // keep rotation between 0-359
+        Rotation.y = Rotation.y * -1; // Invert rotation
+        Rotation.y = Rotation.y%360; // keep rotation between 0-359
+
+
+        //Utils.Math.Mod(Mathf.RoundToInt(target.eulerAngles.y), 360);
     }
 
     // Convert from Unity Transform Values to BH and return brickdata (does not overwrite brick) - use this when exporting bricks
@@ -61,7 +67,7 @@ public class Brick
 
     // call this when rotation is changed
     public void CheckIfScuffed () {
-        if (!((Rotation == 0 || Rotation == 180) ^ ScuffedScale)) { // massive brain code that i did not figure out myself
+        if (!((Rotation.y == 0 || Rotation.y == 180) ^ ScuffedScale)) { // massive brain code that i did not figure out myself
             Scale = Scale.SwapXY();
             Position = gameObject.transform.position.ToBB(Scale);
             ScuffedScale = !ScuffedScale;
