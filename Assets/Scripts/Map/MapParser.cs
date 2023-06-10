@@ -127,6 +127,9 @@ public class MapParser : MonoBehaviour
                     brick.Rotation.y = rotInfo[1]%360;
                     brick.Rotation.z = rotInfo[2]%360;
                     if (brick.Rotation.y != 0 && brick.Rotation.y != 180) brick.Scale = brick.Scale.SwapXZ(); // assuming this is post transform conversion
+                } else if (line.StartsWith("+SHAPE")) {
+                    // this line is defining the brick shape
+                    brick.Shape = BB.GetShape(line.Substring(7));
                 } else if (line.StartsWith("+NOCOLLISION")) {
                     // this line is defining whether or not the brick has collision
                     brick.CollisionEnabled = false;

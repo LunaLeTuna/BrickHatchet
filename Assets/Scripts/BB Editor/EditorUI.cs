@@ -576,7 +576,10 @@ public class EditorUI : MonoBehaviour
             HierarchyElement he = element.GetComponent<HierarchyElement>();
             
 
-            if(b.KE_Type == Brick.KEType.Light){
+            if(b.KE_Type == Brick.KEType.Obsolete){
+                int iconID = 15;
+                he.Set(Map.ElementType.Light, HierarchyIcons[iconID], b.Name, element, b);
+            }else if(b.KE_Type == Brick.KEType.Light){
                 int iconID = 14;
                 he.Set(Map.ElementType.Light, HierarchyIcons[iconID], b.Name, element, b);
             }else{

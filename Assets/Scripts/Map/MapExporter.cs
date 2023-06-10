@@ -307,6 +307,7 @@ public class MapExporter : MonoBehaviour
 
         export += $"\n\t+NAME {b.Name.RemoveNewlines()}"; // brick name
         if (b.Rotation.x != 0.0 || b.Rotation.y != 0.0 || b.Rotation.z != 0.0) export += $"\n\t+ROT {(b.Rotation.x).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.y).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.z).ToString(CultureInfo.InvariantCulture)}"; // rotation
+        if (b.Shape != Brick.ShapeType.cube && b.KE_Type == Brick.KEType.Legacy_Brick) export += $"\n\t+SHAPE {b.Shape.ToString()}"; // shape
         if (!b.CollisionEnabled) export += $"\n\t+NOCOLLISION"; // collision
         if (!string.IsNullOrEmpty(b.Model)) export += $"\n\t+MODEL {b.Model.RemoveNewlines()}"; // model
 
