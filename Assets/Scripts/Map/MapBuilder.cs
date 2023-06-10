@@ -136,6 +136,7 @@ public class MapBuilder : MonoBehaviour
         // Set up for BrickGO
         BrickGO bg = brickGameobject.GetComponent<BrickGO>();
         bg.brick = source;
+        bg.shutup = true;
         source.brickGO = bg;
 
         // Set up the BrickShape

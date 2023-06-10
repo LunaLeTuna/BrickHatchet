@@ -777,7 +777,7 @@ public class EditorUI : MonoBehaviour
         element.SelectionImage.color = UnselectedHierarchyElementColor;
         element.SelectionImage.sprite = null;
 
-        if (element.Type == Map.ElementType.Brick) {
+        if (element.Type == Map.ElementType.Brick || element.Type == Map.ElementType.Light) {
             Brick b = element.AssociatedObject as Brick;
             b.Selected = false;
             b.brickGO.SetOutline(false); // outlinen't gameobject
