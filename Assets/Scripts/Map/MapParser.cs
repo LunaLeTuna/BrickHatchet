@@ -95,8 +95,8 @@ public class MapParser : MonoBehaviour
                     float[] brickInfo = Helper.StringToFloatArray(line.Substring(letype.Length));
                     brick.Position = new Vector3(brickInfo[0], brickInfo[1], brickInfo[2]); // first 3 numbers are position
                     brick.Scale = new Vector3(brickInfo[3], brickInfo[4], brickInfo[5]); // next 3 numbers are scale
-                    brick.BrickColor = new Color(brickInfo[6], brickInfo[7], brickInfo[8]); // next 3 numbers are color
-                    brick.Transparency = brickInfo[9]; // last number is transparency
+                    brick.BrickColor = new Color(1,1,1); // next 3 numbers are color
+                    brick.Transparency = 1; // last number is transparency
                     brick.ID = currentID;
 
                     if (startedGroups.Count > 0) {
@@ -120,6 +120,14 @@ public class MapParser : MonoBehaviour
                     } else {
                         brick.Name = line.Substring(6);
                     }
+                } else if (line.StartsWith("+COLOR")) {
+                    // this line is defining the brick rotation
+                    float[] colorInfo = Helper.StringToFloatArray(line.Substring(7));
+                    brick.BrickColor = new Color(colorInfo[0],colorInfo[1],colorInfo[2]);
+                } else if (line.StartsWith("+TRANS")) {
+                    // this line is defining the brick rotation
+                    float[] colorInfo = Helper.StringToFloatArray(line.Substring(7));
+                    brick.Transparency = colorInfo[0];
                 } else if (line.StartsWith("+ROT")) {
                     // this line is defining the brick rotation
                     float[] rotInfo = Helper.StringToFloatArray(line.Substring(5));

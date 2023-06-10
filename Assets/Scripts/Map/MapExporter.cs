@@ -303,9 +303,11 @@ public class MapExporter : MonoBehaviour
         }
         
         // this is the long line that defines bricks
-        export += $"{bhPos.x.ToString(CultureInfo.InvariantCulture)} {bhPos.y.ToString(CultureInfo.InvariantCulture)} {bhPos.z.ToString(CultureInfo.InvariantCulture)} {bhScale.x.ToString(CultureInfo.InvariantCulture)} {bhScale.y.ToString(CultureInfo.InvariantCulture)} {bhScale.z.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.r.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.g.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.b.ToString(CultureInfo.InvariantCulture)} {b.Transparency.ToString(CultureInfo.InvariantCulture)}";
+        export += $"{bhPos.x.ToString(CultureInfo.InvariantCulture)} {bhPos.y.ToString(CultureInfo.InvariantCulture)} {bhPos.z.ToString(CultureInfo.InvariantCulture)} {bhScale.x.ToString(CultureInfo.InvariantCulture)} {bhScale.y.ToString(CultureInfo.InvariantCulture)} {bhScale.z.ToString(CultureInfo.InvariantCulture)}";
 
         export += $"\n\t+NAME {b.Name.RemoveNewlines()}"; // brick name
+        if (b.BrickColor.r != 1.0 || b.BrickColor.g != 1.0 || b.BrickColor.b != 1.0) export += $"\n\t+COLOR {b.BrickColor.r.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.g.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.b.ToString(CultureInfo.InvariantCulture)} {b.Transparency.ToString(CultureInfo.InvariantCulture)}"; //color
+        if (b.Transparency != 1.0) export += $"\n\t+TRANS {b.Transparency.ToString(CultureInfo.InvariantCulture)}"; //transparency
         if (b.Rotation.x != 0.0 || b.Rotation.y != 0.0 || b.Rotation.z != 0.0) export += $"\n\t+ROT {(b.Rotation.x).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.y).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.z).ToString(CultureInfo.InvariantCulture)}"; // rotation
         if (b.Shape != Brick.ShapeType.cube && b.KE_Type == Brick.KEType.Legacy_Brick) export += $"\n\t+SHAPE {b.Shape.ToString()}"; // shape
         if (!b.CollisionEnabled) export += $"\n\t+NOCOLLISION"; // collision
