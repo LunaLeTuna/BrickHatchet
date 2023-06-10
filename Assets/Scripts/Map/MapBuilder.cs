@@ -71,7 +71,15 @@ public class MapBuilder : MonoBehaviour
 
         // create bricks
         for (int i = 0; i < map.Bricks.Count; i++) {
-            CreateBrickGameObject(map.Bricks[i]);
+            if(map.Bricks[i].KE_Type == Brick.KEType.Light){
+                CreateBillBoardGameObject(map.Bricks[i], 1);
+            }
+            else  if(map.Bricks[i].KE_Type == Brick.KEType.Obsolete){
+                CreateBillBoardGameObject(map.Bricks[i], 0);
+            }
+            else if(map.Bricks[i].KE_Type == Brick.KEType.Legacy_Brick){
+                CreateBrickGameObject(map.Bricks[i]);
+            }
         }
     }
 

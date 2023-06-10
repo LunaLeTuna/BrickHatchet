@@ -291,11 +291,19 @@ public class MapExporter : MonoBehaviour
     }
 
     private static string ExportOBJ (Brick b) {
-        Vector3 bhScale = BB.CorrectScale(b.Scale.SwapYZ(), Utils.Math.Mod(Mathf.RoundToInt(b.Rotation.y), 360) * -1);
-        Vector3 bhPos = b.Position.ToBB(bhScale);
+        Vector3 bhScale = b.Scale;
+        Vector3 bhPos = b.Position;
+
+        string export = "";
+        
+        if (b.KE_Type == Brick.KEType.Obsolete) {
+            export += $"{b.missing_type} ";
+        } else {
+            export += $"{b.KE_Type.ToString()} ";
+        }
         
         // this is the long line that defines bricks
-        string export = $"{bhPos.x.ToString(CultureInfo.InvariantCulture)} {bhPos.y.ToString(CultureInfo.InvariantCulture)} {bhPos.z.ToString(CultureInfo.InvariantCulture)} {bhScale.x.ToString(CultureInfo.InvariantCulture)} {bhScale.y.ToString(CultureInfo.InvariantCulture)} {bhScale.z.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.r.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.g.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.b.ToString(CultureInfo.InvariantCulture)} {b.Transparency.ToString(CultureInfo.InvariantCulture)}";
+        export += $"{bhPos.x.ToString(CultureInfo.InvariantCulture)} {bhPos.y.ToString(CultureInfo.InvariantCulture)} {bhPos.z.ToString(CultureInfo.InvariantCulture)} {bhScale.x.ToString(CultureInfo.InvariantCulture)} {bhScale.y.ToString(CultureInfo.InvariantCulture)} {bhScale.z.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.r.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.g.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.b.ToString(CultureInfo.InvariantCulture)} {b.Transparency.ToString(CultureInfo.InvariantCulture)}";
 
         export += $"\n\t+NAME {b.Name.RemoveNewlines()}"; // brick name
         if (b.Rotation.x != 0.0 || b.Rotation.y != 0.0 || b.Rotation.z != 0.0) export += $"\n\t+ROT {(b.Rotation.x).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.y).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.z).ToString(CultureInfo.InvariantCulture)}"; // rotation

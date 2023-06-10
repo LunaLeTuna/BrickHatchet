@@ -76,10 +76,25 @@ public class MapParser : MonoBehaviour
                 } else if (line[0] != '>') {
                     // this line is most likely defining a new brick
                     Brick brick = new Brick();
-                    float[] brickInfo = Helper.StringToFloatArray(line);
+                    
+                    string letype = line.Split(' ')[0];
+                    // this line is defining the brick shape
+                    switch(letype){
+                        case "Legacy_Brick":
+                            brick.KE_Type = Brick.KEType.Legacy_Brick;
+                            break;
+                        case "Light":
+                            brick.KE_Type = Brick.KEType.Light;
+                            break;
+                        default:
+                            brick.KE_Type = Brick.KEType.Obsolete;
+                            brick.missing_type = letype;
+                            break;
+                    }
+                    
+                    float[] brickInfo = Helper.StringToFloatArray(line.Substring(letype.Length));
                     brick.Position = new Vector3(brickInfo[0], brickInfo[1], brickInfo[2]); // first 3 numbers are position
                     brick.Scale = new Vector3(brickInfo[3], brickInfo[4], brickInfo[5]); // next 3 numbers are scale
-                    brick.ConvertTransformToUnity();
                     brick.BrickColor = new Color(brickInfo[6], brickInfo[7], brickInfo[8]); // next 3 numbers are color
                     brick.Transparency = brickInfo[9]; // last number is transparency
                     brick.ID = currentID;

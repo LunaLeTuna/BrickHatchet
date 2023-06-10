@@ -1143,14 +1143,8 @@ public class EditorUI : MonoBehaviour
                 BrickInspectorElements[0].SetString(b.Name);
                 BrickInspectorElements[1].SetVector3(b.Position);
                 BrickInspectorElements[1].SetExtraLabel(Helper.V3ToBH(b.Position, b.Scale));
-                BrickInspectorElements[2].SetVector3(b.Scale);
-                BrickInspectorElements[3].SetVector3(b.Rotation);
                 BrickInspectorElements[4].SetColor(b.BrickColor, true);
                 colorPicker.SetColor(b.BrickColor, false); // do not invoke color changed event
-                BrickInspectorElements[5].SetInt(Mathf.RoundToInt(b.Transparency * 255));
-                BrickInspectorElements[6].SetDropdown((int)b.Shape);
-                BrickInspectorElements[7].SetBool(b.CollisionEnabled);
-                BrickInspectorElements[8].SetString(b.Model);
             } else if (lastType == Map.ElementType.Brick) {
                 // show brick properties
                 ShowInspectorElements(1);

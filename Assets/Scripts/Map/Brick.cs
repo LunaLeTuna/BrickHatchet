@@ -15,6 +15,7 @@ public class Brick
     public bool CollisionEnabled = true; // Can you collide with the brick?
     public string Model; // ID of the asset used for the brick
     public KEType KE_Type; // this determins if it's a prop or maybe a light... could be anything
+    public string missing_type; // if there is no KE_Type when importing we just throw it here for export
 
     // bh properties
     public bool is_bh = false;
@@ -85,7 +86,8 @@ public class Brick
     public enum KEType {
         Legacy_Brick,
         Prop,
-        Light
+        Light,
+        Obsolete
     }
 
     // plate, corner, corner_inv, and round are not included because:
