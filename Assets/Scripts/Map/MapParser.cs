@@ -42,7 +42,7 @@ public class MapParser : MonoBehaviour
         // map.AmbientColor = Helper.StringToColor(lines[1], true); // for some reason, the ambient color is in BGR format. why?
         // map.BaseplateColor = Helper.StringToColor(lines[2], true); // same as above
         // map.SkyColor = Helper.StringToColor(lines[3]); // this however, is RGB. wack
-        // map.BaseplateSize = int.Parse(lines[4], CultureInfo.InvariantCulture);
+        map.BaseplateSize = 0;
         // map.SunIntensity = int.Parse(lines[5], CultureInfo.InvariantCulture);
 
         int currentID = 0; // this will be incremented when a brick or group is defined
@@ -59,6 +59,10 @@ public class MapParser : MonoBehaviour
                     map.SkyColor = Helper.StringToColor(line.Substring(10));
                 } else if (line.StartsWith(">SunIntensity")) {
                     map.SunIntensity = int.Parse(line.Substring(14));
+                } else if (line.StartsWith(">Baseplate")) {
+                    float[] bpInfo = Helper.StringToFloatArray(line.Substring(11));
+                    map.BaseplateColor = new Color(bpInfo[1],bpInfo[2],bpInfo[3]);
+                    map.BaseplateSize = (int)bpInfo[0];
                 } else if (line.StartsWith(">SLOT")) {
                     // this line is defining an item, but those are history so ignore them
                     continue;

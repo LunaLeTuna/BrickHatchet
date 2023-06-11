@@ -36,6 +36,8 @@ public class MapExporter : MonoBehaviour
             s.WriteLine($">AmbientColor {input.AmbientColor.r.ToString(CultureInfo.InvariantCulture)} {input.AmbientColor.g.ToString(CultureInfo.InvariantCulture)} {input.AmbientColor.b.ToString(CultureInfo.InvariantCulture)}"); // write ambient color
             s.WriteLine($">SkyColor {input.SkyColor.r.ToString(CultureInfo.InvariantCulture)} {input.SkyColor.g.ToString(CultureInfo.InvariantCulture)} {input.SkyColor.b.ToString(CultureInfo.InvariantCulture)}"); // write sky color
             s.WriteLine($">SunIntensity {input.SunIntensity.ToString(CultureInfo.InvariantCulture)}"); // sun intensity
+            if (input.BaseplateSize != 0) s.WriteLine($">Baseplate {input.BaseplateSize.ToString(CultureInfo.InvariantCulture)} {input.BaseplateColor.r.ToString(CultureInfo.InvariantCulture)} {input.BaseplateColor.g.ToString(CultureInfo.InvariantCulture)} {input.BaseplateColor.b.ToString(CultureInfo.InvariantCulture)} 1"); // baseplate size and color
+
             s.WriteLine(); // another blank line
 
             // now export bricks
