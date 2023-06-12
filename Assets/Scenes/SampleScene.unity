@@ -30731,7 +30731,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 218454791}
   m_HandleRect: {fileID: 218454790}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -42537,6 +42537,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 1a7d01be98067587dbd6c480c9f89796, type: 2}
   - {fileID: 2100000, guid: 55f00fd80843ec800a054514a1d62ad5, type: 2}
   - {fileID: 2100000, guid: b7d54b43643d4dce8bc2ad27830554e7, type: 2}
+  Prefabs:
+  - {fileID: 8907188218389647711, guid: 87a49a07d93db70cd8cdc57b4c4efe72, type: 3}
   ShapePrefabs:
   - {fileID: 8907188218389647711, guid: f912b15dec201bc498a71f20f12c034f, type: 3}
   - {fileID: 7566992356483077259, guid: e7449ead2085f79438abc6ae1f2b6608, type: 3}
@@ -42685,6 +42687,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8a3e4664f027836458ea48b8ce3ccc20, type: 3}
   - {fileID: 21300000, guid: afe9a78583ca5aedab732bb9140615f9, type: 3}
   - {fileID: 21300000, guid: f54a2d6364d99417688929dfad02c524, type: 3}
+  - {fileID: 21300000, guid: 9ee8fd6114ad7cf61a728814d28e9c3a, type: 3}
   HierarchyElementTemplate: {fileID: 1030833379722413664, guid: 6e4174cdb9b07a546bbebb34b7cf74c9,
     type: 3}
   GroupHierarchyElementTemplate: {fileID: 4511998391967468689, guid: fb41101bf98bfc048aa7547ed61c9383,
