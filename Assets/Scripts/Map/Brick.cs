@@ -87,6 +87,7 @@ public class Brick
         Legacy_Brick,
         Prop,
         Light,
+        Spawn_Point,
         Obsolete
     }
 

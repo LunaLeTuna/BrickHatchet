@@ -31,6 +31,7 @@ public class Map
         World,
         Light,
         Brick,
+        Spawn,
         Group
     }
 

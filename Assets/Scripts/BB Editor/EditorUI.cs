@@ -582,6 +582,9 @@ public class EditorUI : MonoBehaviour
             }else if(b.KE_Type == Brick.KEType.Light){
                 int iconID = 14;
                 he.Set(Map.ElementType.Light, HierarchyIcons[iconID], b.Name, element, b);
+            }else if(b.KE_Type == Brick.KEType.Spawn_Point){
+                int iconID = 16;
+                he.Set(Map.ElementType.Spawn, HierarchyIcons[iconID], b.Name, element, b);
             }else{
                 int iconID = 2 + (int)b.Shape;
                 he.Set(Map.ElementType.Brick, HierarchyIcons[iconID], b.Name, element, b);
@@ -746,7 +749,9 @@ public class EditorUI : MonoBehaviour
 
             SelectedElements.Add(element);
 
-            if(element.Type == Map.ElementType.Brick || element.Type == Map.ElementType.Light) {
+            if(element.Type == Map.ElementType.Brick ||
+            element.Type == Map.ElementType.Light ||
+            element.Type == Map.ElementType.Spawn) {
                 Brick b = element.AssociatedObject as Brick;
                 gizmo.AddTarget(b.gameObject.transform);
                 b.Selected = true;

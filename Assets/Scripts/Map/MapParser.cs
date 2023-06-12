@@ -90,6 +90,9 @@ public class MapParser : MonoBehaviour
                         case "Light":
                             brick.KE_Type = Brick.KEType.Light;
                             break;
+                        case "Spawn_Point":
+                            brick.KE_Type = Brick.KEType.Spawn_Point;
+                            break;
                         default:
                             brick.KE_Type = Brick.KEType.Obsolete;
                             brick.missing_type = letype;

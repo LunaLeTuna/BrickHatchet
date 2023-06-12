@@ -23,6 +23,7 @@ public class MapBuilder : MonoBehaviour
 
     public GameObject billboard;
     public Material[] billboardShaders;
+    public GameObject[] Prefabs;
 
     public GameObject[] ShapePrefabs;
 
@@ -77,6 +78,9 @@ public class MapBuilder : MonoBehaviour
             else  if(map.Bricks[i].KE_Type == Brick.KEType.Obsolete){
                 CreateBillBoardGameObject(map.Bricks[i], 0);
             }
+            else if(map.Bricks[i].KE_Type == Brick.KEType.Spawn_Point){
+                CreateGameObject(map.Bricks[i], 0);
+            }
             else if(map.Bricks[i].KE_Type == Brick.KEType.Legacy_Brick){
                 CreateBrickGameObject(map.Bricks[i]);
             }
@@ -120,6 +124,32 @@ public class MapBuilder : MonoBehaviour
             if (submeshCount > 2) brickMaterials[2] = MaterialCache.instance.GetMaterial((source.BrickColor, source.Transparency, MaterialCache.FaceType.Inlet, new Vector2(source.Scale.x, source.Scale.z), BrickShader));
             renderer.materials = brickMaterials;
         }
+
+        bs.UpdateShape(); // updates the shape
+        source.UpdateModel(); // sets the model
+
+        return brickGameobject;
+    }
+
+    public GameObject CreateGameObject (Brick source, int Instance) {
+        GameObject brickGameobject = Instantiate(Prefabs[(int)Instance]); // get correct shape prefab using enum index
+        brickGameobject.name = source.Name;
+        brickGameobject.layer = 9;
+        source.gameObject = brickGameobject;
+
+        // Set up for BrickGO
+        BrickGO bg = brickGameobject.GetComponent<BrickGO>();
+        bg.brick = source;
+        bg.shutup = true;
+        source.brickGO = bg;
+
+        // Set up the BrickShape
+        BrickShape bs = brickGameobject.GetComponent<BrickShape>();
+        source.brickShape = bs;
+
+        // Set transform info
+        brickGameobject.transform.position = source.Position;
+        brickGameobject.transform.eulerAngles = source.Rotation;
 
         bs.UpdateShape(); // updates the shape
         source.UpdateModel(); // sets the model
