@@ -785,14 +785,14 @@ public class EditorUI : MonoBehaviour
         element.SelectionImage.color = UnselectedHierarchyElementColor;
         element.SelectionImage.sprite = null;
 
-        if (element.Type == Map.ElementType.Brick || element.Type == Map.ElementType.Light) {
+        if (element.Type == Map.ElementType.World) WorldIsSelected = false;
+        else {
             Brick b = element.AssociatedObject as Brick;
             b.Selected = false;
             b.brickGO.SetOutline(false); // outlinen't gameobject
             gizmo.RemoveTarget(b.gameObject.transform);
             b.gameObject.layer = 9; // change to brick layer
         }
-        if (element.Type == Map.ElementType.World) WorldIsSelected = false;
         if (updateInspector) UpdateInspector();
     }
 
@@ -1440,6 +1440,51 @@ public class EditorUI : MonoBehaviour
         int id = ++main.LoadedMap.lastID;
         b.ID = id;
         MapBuilder.instance.CreateBrickGameObject(b);
+
+        // add brick to map
+        main.LoadedMap.MapElements.Add(id, b);
+        main.LoadedMap.Bricks.Add(b);
+
+        // add brick to hierarchy
+        AddHierarchyElement(b);
+        SelectHierarchyElement(HierarchyElements[id], false, true, false, false, true);
+
+        // add brick to history
+        ElementsAdded ea = new ElementsAdded();
+        ea.type = EditorAction.ActionType.ElementsAdded;
+        ea.bricksAdded = new BrickData[1];
+        ea.bricksAdded[0] = new BrickData(b);
+        EditorHistory.AddToHistory(ea);
+
+        return b;
+    }
+
+    // create new Spawn (ui button)
+    public void NewSpawnButton () {
+        NewSpawn(); // only voids can be called from a ui button so this just calls newbrick and ignores the return
+    }
+
+    // create new Spawn
+    public Brick NewSpawn () {
+        // calculate target position
+        Vector3 brickPos = MapBuilder.instance.mainCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f)).Round();
+        // with raycasting
+        RaycastHit hit;
+        if (Physics.Raycast(MapBuilder.instance.mainCam.transform.position, MapBuilder.instance.mainCam.transform.forward, out hit, SelectionDistance, BrickRaycastMask)) {
+            brickPos = hit.point.Round();
+        }
+
+        // create brick object with default values
+        Brick b = new Brick();
+        b.Name = "New Spawn";
+        b.Position = brickPos;
+        b.Scale = Vector3.one;
+        b.BrickColor = Color.gray;
+        b.Transparency = 1f;
+        b.KE_Type = Brick.KEType.Spawn_Point;
+        int id = ++main.LoadedMap.lastID;
+        b.ID = id;
+        MapBuilder.instance.CreateGameObject(b, 0);
 
         // add brick to map
         main.LoadedMap.MapElements.Add(id, b);
