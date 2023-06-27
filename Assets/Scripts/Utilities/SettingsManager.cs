@@ -100,4 +100,5 @@ public class Settings {
     public float AmbientLight; // ambient light level, increasing will make unlit faces lighter
     public string BrickHillPlayerPath; // path to the brick-hill player.exe, used for test mode
     public string NodeHillServerPath; // path to your node-hill server folder, used for test mode
+    public string KEProjectPath; // path to your KE Project folder, used for loading assets in to editor
 }

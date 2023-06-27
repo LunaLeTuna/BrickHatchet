@@ -156,6 +156,7 @@ public class EditorUI : MonoBehaviour
 
     public TMP_Text PlayerPathLabel;
     public TMP_Text ServerPathLabel;
+    public TMP_Text KEProjectPathLabel;
 
     // ye
 
@@ -1830,6 +1831,7 @@ public class EditorUI : MonoBehaviour
         // advanced
         PlayerPathLabel.text = SettingsManager.Settings.BrickHillPlayerPath;
         ServerPathLabel.text = SettingsManager.Settings.NodeHillServerPath;
+        KEProjectPathLabel.text = SettingsManager.Settings.KEProjectPath;
     }
 
     public void CameraSpeedSliderUpdated () {
@@ -1891,6 +1893,16 @@ public class EditorUI : MonoBehaviour
             SettingsManager.Settings.NodeHillServerPath = paths[0];
             TestModeManager.ServerPath = paths[0];
             ServerPathLabel.text = paths[0];
+            SettingsManager.SaveSettings();
+        }
+    }
+
+    public void SetKEProjectPath () {
+        string[] paths = StandaloneFileBrowser.OpenFolderPanel("Open KE project folder", "", false);
+        if (paths.Length > 0) {
+            SettingsManager.Settings.KEProjectPath = paths[0];
+            // TestModeManager.ServerPath = paths[0];
+            KEProjectPathLabel.text = paths[0];
             SettingsManager.SaveSettings();
         }
     }
