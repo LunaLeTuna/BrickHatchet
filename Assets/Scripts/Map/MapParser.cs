@@ -63,7 +63,12 @@ public class MapParser : MonoBehaviour
                     float[] bpInfo = Helper.StringToFloatArray(line.Substring(11));
                     map.BaseplateColor = new Color(bpInfo[1],bpInfo[2],bpInfo[3]);
                     map.BaseplateSize = (int)bpInfo[0];
-                } else if (line.StartsWith(">SLOT")) {
+                } else if (line.StartsWith(">Texture_Reference")) {
+                    string[] line_split = line.Split(" ");
+                    int id = int.Parse(line_split[1]);
+                    string local = line_split[2];
+                    map.TextureDictionary.Add(id, local);
+                }else if (line.StartsWith(">SLOT")) {
                     // this line is defining an item, but those are history so ignore them
                     continue;
                 } else if (line.StartsWith(">CAMPOS")) {
@@ -89,6 +94,9 @@ public class MapParser : MonoBehaviour
                             break;
                         case "Light":
                             brick.KE_Type = Brick.KEType.Light;
+                            break;
+                        case "Brush":
+                            brick.KE_Type = Brick.KEType.Brush;
                             break;
                         case "Spawn_Point":
                             brick.KE_Type = Brick.KEType.Spawn_Point;
@@ -141,7 +149,12 @@ public class MapParser : MonoBehaviour
                     brick.Rotation.x = rotInfo[0]%360;
                     brick.Rotation.y = rotInfo[1]%360;
                     brick.Rotation.z = rotInfo[2]%360;
-                    if (brick.Rotation.y != 0 && brick.Rotation.y != 180) brick.Scale = brick.Scale.SwapXZ(); // assuming this is post transform conversion
+                    //if (brick.Rotation.y != 0 && brick.Rotation.y != 180) brick.Scale = brick.Scale.SwapXZ(); // assuming this is post transform conversion
+                } else if (line.StartsWith("+Texture")) {
+                    // this line is defining the brick rotation
+                    string[] textureinfo = line.Split(" ");
+                    brick.face_texture_ids[int.Parse(textureinfo[1])-1] = int.Parse(textureinfo[2]);
+                    //if (brick.Rotation.y != 0 && brick.Rotation.y != 180) brick.Scale = brick.Scale.SwapXZ(); // assuming this is post transform conversion
                 } else if (line.StartsWith("+SHAPE")) {
                     // this line is defining the brick shape
                     brick.Shape = BB.GetShape(line.Substring(7));

@@ -20,6 +20,8 @@ public class Map
     public List<BrickGroup> Groups = new List<BrickGroup>(); // easy access to all the groups in the map
     public List<Team> Teams = new List<Team>();
 
+    public Dictionary<int, string> TextureDictionary = new Dictionary<int, string>();
+
     public Dictionary<int, object> MapElements = new Dictionary<int, object>(); // all elements in the map, accessed by their id
     public int lastID; // last id in map, because ids can get confusing once bricks get deleted and created
 
@@ -30,6 +32,7 @@ public class Map
     public enum ElementType {
         World,
         Light,
+        Brush,
         Brick,
         Spawn,
         Group

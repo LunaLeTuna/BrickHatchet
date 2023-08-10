@@ -17,6 +17,9 @@ public class Brick
     public KEType KE_Type; // this determins if it's a prop or maybe a light... could be anything
     public string missing_type; // if there is no KE_Type when importing we just throw it here for export
 
+    // brush
+    public int[] face_texture_ids = {-1,-1,-1,-1,-1,-1};
+
     // bh properties
     public bool is_bh = false;
     public bool Clickable = false; // Is the brick clickable?
@@ -86,6 +89,7 @@ public class Brick
     public enum KEType {
         Legacy_Brick,
         Prop,
+        Brush,
         Light,
         Spawn_Point,
         Obsolete

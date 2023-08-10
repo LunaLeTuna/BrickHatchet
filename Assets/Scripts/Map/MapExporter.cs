@@ -40,6 +40,12 @@ public class MapExporter : MonoBehaviour
 
             s.WriteLine(); // another blank line
 
+            foreach(KeyValuePair<int, string> tesxt in input.TextureDictionary){
+                s.WriteLine($">Texture_Reference {tesxt.Key} {tesxt.Value}"); // sun intensity
+            }
+
+            s.WriteLine(); // more blank lines :D
+
             // now export bricks
             if (BrickBuilder) {
                 // export groups and brick
@@ -310,10 +316,17 @@ public class MapExporter : MonoBehaviour
         export += $"\n\t+NAME {b.Name.RemoveNewlines()}"; // brick name
         if (b.BrickColor.r != 1.0 || b.BrickColor.g != 1.0 || b.BrickColor.b != 1.0) export += $"\n\t+COLOR {b.BrickColor.r.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.g.ToString(CultureInfo.InvariantCulture)} {b.BrickColor.b.ToString(CultureInfo.InvariantCulture)}"; //color
         if (b.Transparency != 1.0) export += $"\n\t+TRANS {b.Transparency.ToString(CultureInfo.InvariantCulture)}"; //transparency
-        if (b.Rotation.x != 0.0 || b.Rotation.y != 0.0 || b.Rotation.z != 0.0) export += $"\n\t+ROT {(b.Rotation.x).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.y).ToString(CultureInfo.InvariantCulture)} {(b.Rotation.z).ToString(CultureInfo.InvariantCulture)}"; // rotation
+        if (b.Rotation.x != 0.0 || b.Rotation.y != 0.0 || b.Rotation.z != 0.0) export += $"\n\t+ROT {(b.gameObject.transform.localEulerAngles.x).ToString(CultureInfo.InvariantCulture)} {(b.gameObject.transform.localEulerAngles.y).ToString(CultureInfo.InvariantCulture)} {(b.gameObject.transform.localEulerAngles.z).ToString(CultureInfo.InvariantCulture)}"; // rotation
         if (b.Shape != Brick.ShapeType.cube && b.KE_Type == Brick.KEType.Legacy_Brick) export += $"\n\t+SHAPE {b.Shape.ToString()}"; // shape
         if (!b.CollisionEnabled) export += $"\n\t+NOCOLLISION"; // collision
         if (!string.IsNullOrEmpty(b.Model)) export += $"\n\t+MODEL {b.Model.RemoveNewlines()}"; // model
+        if (b.KE_Type == Brick.KEType.Brush){
+            int i = 0;
+            foreach(int tesxt in b.face_texture_ids){
+                i++;
+                export += $"\n\t+Texture {i} {tesxt}";
+            }
+        }
 
         return export;
     }

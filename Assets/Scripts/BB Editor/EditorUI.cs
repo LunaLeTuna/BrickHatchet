@@ -112,9 +112,15 @@ public class EditorUI : MonoBehaviour
     public InspectorElement[] BrickInspectorElements;
     public InspectorElement[] GroupInspectorElements;
 
+    //public ColorPicker Texturer;
+    public GameObject TexturerGO;
+
     public ColorPicker colorPicker;
     public GameObject colorPickerGO;
     public ColorPickerTarget colorPickerTarget;
+
+    // textures stuff
+    public GameObject Textures;
 
     // preferences stuff
     public GameObject Preferences;
@@ -428,6 +434,10 @@ public class EditorUI : MonoBehaviour
         ShowColorPicker(6);
     }
 
+    public void TextureTool () {
+        ShowColorPicker(6);
+    }
+
     // Tools buttons
 
     public void ScreenshotButton () {
@@ -586,6 +596,9 @@ public class EditorUI : MonoBehaviour
             }else if(b.KE_Type == Brick.KEType.Spawn_Point){
                 int iconID = 16;
                 he.Set(Map.ElementType.Spawn, HierarchyIcons[iconID], b.Name, element, b);
+            }else if(b.KE_Type == Brick.KEType.Brush){
+                int iconID = 17;
+                he.Set(Map.ElementType.Brush, HierarchyIcons[iconID], b.Name, element, b);
             }else{
                 int iconID = 2 + (int)b.Shape;
                 he.Set(Map.ElementType.Brick, HierarchyIcons[iconID], b.Name, element, b);
@@ -752,7 +765,8 @@ public class EditorUI : MonoBehaviour
 
             if(element.Type == Map.ElementType.Brick ||
             element.Type == Map.ElementType.Light ||
-            element.Type == Map.ElementType.Spawn) {
+            element.Type == Map.ElementType.Spawn ||
+            element.Type == Map.ElementType.Brush) {
                 Brick b = element.AssociatedObject as Brick;
                 gizmo.AddTarget(b.gameObject.transform);
                 b.Selected = true;
@@ -1152,8 +1166,48 @@ public class EditorUI : MonoBehaviour
                 BrickInspectorElements[0].SetString(b.Name);
                 BrickInspectorElements[1].SetVector3(b.Position);
                 BrickInspectorElements[1].SetExtraLabel(Helper.V3ToBH(b.Position, b.Scale));
+                BrickInspectorElements[2].SetVector3(b.Scale);
+                BrickInspectorElements[3].SetVector3(b.Rotation);
                 BrickInspectorElements[4].SetColor(b.BrickColor, true);
                 colorPicker.SetColor(b.BrickColor, false); // do not invoke color changed event
+                BrickInspectorElements[5].SetInt(Mathf.RoundToInt(b.Transparency * 255));
+                BrickInspectorElements[6].SetDropdown((int)b.Shape);
+                BrickInspectorElements[7].SetBool(b.CollisionEnabled);
+                BrickInspectorElements[8].SetString(b.Model);
+                //BrickInspectorElements[9].SetBool(b.Clickable);
+                //BrickInspectorElements[9].SetFloat(b.ClickDistance);
+
+                // set color picker target
+                colorPickerTarget = ColorPickerTarget.Brick;
+            } else if (lastType == Map.ElementType.Brush) {
+                // show properties
+                BrickInspectorElements[0].gameObject.SetActive(true);
+                BrickInspectorElements[1].gameObject.SetActive(true);
+                BrickInspectorElements[2].gameObject.SetActive(true);
+                BrickInspectorElements[3].gameObject.SetActive(true);
+                BrickInspectorElements[4].gameObject.SetActive(true);
+                BrickInspectorElements[5].gameObject.SetActive(true);
+                // BrickInspectorElements[6].gameObject.SetActive(true);
+                BrickInspectorElements[7].gameObject.SetActive(true);
+
+                // update the elements
+                Brick b = SelectedElements[0].AssociatedObject as Brick;
+                BrickInspectorElements[0].SetString(b.Name);
+                BrickInspectorElements[1].SetVector3(b.Position);
+                BrickInspectorElements[1].SetExtraLabel(Helper.V3ToBH(b.Position, b.Scale));
+                BrickInspectorElements[2].SetVector3(b.Scale);
+                BrickInspectorElements[3].SetVector3(b.Rotation);
+                BrickInspectorElements[4].SetColor(b.BrickColor, true);
+                colorPicker.SetColor(b.BrickColor, false); // do not invoke color changed event
+                BrickInspectorElements[5].SetInt(Mathf.RoundToInt(b.Transparency * 255));
+                BrickInspectorElements[6].SetDropdown((int)b.Shape);
+                BrickInspectorElements[7].SetBool(b.CollisionEnabled);
+                BrickInspectorElements[8].SetString(b.Model);
+                //BrickInspectorElements[9].SetBool(b.Clickable);
+                //BrickInspectorElements[9].SetFloat(b.ClickDistance);
+
+                // set color picker target
+                colorPickerTarget = ColorPickerTarget.Brick;
             } else if (lastType == Map.ElementType.Brick) {
                 // show brick properties
                 ShowInspectorElements(1);
@@ -1348,6 +1402,28 @@ public class EditorUI : MonoBehaviour
     }
 
 
+    public void ShowTexturer () {
+        // colorPickerTarget = (ColorPickerTarget)target;
+
+        // if (colorPickerTarget == ColorPickerTarget.Ambient) {
+        //     colorPicker.SetColor(main.LoadedMap.AmbientColor, false); // do not invoke color changed event
+        // } else if (colorPickerTarget == ColorPickerTarget.Baseplate) {
+        //     colorPicker.SetColor(main.LoadedMap.BaseplateColor, false); // do not invoke color changed event
+        // } else if (colorPickerTarget == ColorPickerTarget.Sky) {
+        //     Texturer.SetColor(main.LoadedMap.SkyColor, false); // do not invoke color changed event
+        // } else if (colorPickerTarget == ColorPickerTarget.Team) {
+        //     Texturer.SetColor(selectedTeam.TeamColor, false);
+        // }
+
+        TexturerGO.SetActive(true);
+    }
+
+    public void HideTexturer () {
+        //colorPickerTarget = ColorPickerTarget.None;
+        TexturerGO.SetActive(false);
+    }
+
+
     public void ShowColorPicker (int target) {
         colorPickerTarget = (ColorPickerTarget)target;
 
@@ -1410,7 +1486,8 @@ public class EditorUI : MonoBehaviour
         Baseplate,
         Sky,
         Team,
-        Paintbrush
+        Paintbrush,
+        UI
     }
 
     // Editing
@@ -1531,6 +1608,50 @@ public class EditorUI : MonoBehaviour
         int id = ++main.LoadedMap.lastID;
         b.ID = id;
         MapBuilder.instance.CreateBillBoardGameObject(b, 1);
+
+        // add brick to map
+        main.LoadedMap.MapElements.Add(id, b);
+        main.LoadedMap.Bricks.Add(b);
+
+        // add brick to hierarchy
+        AddHierarchyElement(b);
+        SelectHierarchyElement(HierarchyElements[id], false, true, false, false, true);
+
+        // add brick to history
+        ElementsAdded ea = new ElementsAdded();
+        ea.type = EditorAction.ActionType.ElementsAdded;
+        ea.bricksAdded = new BrickData[1];
+        ea.bricksAdded[0] = new BrickData(b);
+        EditorHistory.AddToHistory(ea);
+
+        return b;
+    }
+
+    // create new Brush (ui button)
+    public void NewBrushButton () {
+        NewBrush(); // only voids can be called from a ui button so this just calls newbrick and ignores the return
+    }
+
+    public Brick NewBrush () {
+        // calculate target position
+        Vector3 brickPos = MapBuilder.instance.mainCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 10f)).Round();
+        // with raycasting
+        RaycastHit hit;
+        if (Physics.Raycast(MapBuilder.instance.mainCam.transform.position, MapBuilder.instance.mainCam.transform.forward, out hit, SelectionDistance, BrickRaycastMask)) {
+            brickPos = hit.point.Round();
+        }
+
+        // create brick object with default values
+        Brick b = new Brick();
+        b.Name = "New Brush";
+        b.Position = brickPos;
+        b.Scale = Vector3.one;
+        b.BrickColor = Color.gray;
+        b.Transparency = 1f;
+        b.KE_Type = Brick.KEType.Brush;
+        int id = ++main.LoadedMap.lastID;
+        b.ID = id;
+        MapBuilder.instance.CreateGameObject(b, 1);
 
         // add brick to map
         main.LoadedMap.MapElements.Add(id, b);
@@ -1729,6 +1850,18 @@ public class EditorUI : MonoBehaviour
     public void ClearGizmo () {
         if (SelectedElements.Count == 0) return;
         gizmo.ClearTargets();
+    }
+
+    // Texure Browser
+
+    public void ShowTextures () {
+        Textures.SetActive(true);
+        SetInputEnabled(false);
+    }
+
+    public void HideTextures () {
+        Textures.SetActive(false);
+        SetInputEnabled(true);
     }
 
     // Settings

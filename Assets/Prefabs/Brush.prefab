@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1123123317111000525
+--- !u!1 &909072110770064151
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,46 +8,46 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8151530489837133558}
-  - component: {fileID: 6482688220250253244}
-  - component: {fileID: 7553267441011458856}
+  - component: {fileID: 1800721253579952432}
+  - component: {fileID: 7115531951140777839}
+  - component: {fileID: 7831108960962642991}
   m_Layer: 0
-  m_Name: default
+  m_Name: main
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8151530489837133558
+--- !u!4 &1800721253579952432
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1123123317111000525}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.86, z: 0}
-  m_LocalScale: {x: 0.28, y: 0.28, z: 0.28}
+  m_GameObject: {fileID: 909072110770064151}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 764281349544976480}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &6482688220250253244
+--- !u!33 &7115531951140777839
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1123123317111000525}
-  m_Mesh: {fileID: -2432090755550338912, guid: bc8fffe7037ed79eaaac376e6e1fa095, type: 3}
---- !u!23 &7553267441011458856
+  m_GameObject: {fileID: 909072110770064151}
+  m_Mesh: {fileID: -2432090755550338912, guid: b75d257ff3a8b1597bd20a3abd086542, type: 3}
+--- !u!23 &7831108960962642991
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1123123317111000525}
+  m_GameObject: {fileID: 909072110770064151}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -61,9 +61,12 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ecf0d336ffc60cd928bcf2d6d7f504a9, type: 2}
-  - {fileID: 2100000, guid: daefed7731b81228095f28e72c7deb5a, type: 2}
-  - {fileID: 2100000, guid: 7d05e1a3d83d37c30bacd6dfd3e9dc9e, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -98,7 +101,7 @@ GameObject:
   - component: {fileID: 1302928824576047080}
   - component: {fileID: 8084599068528138884}
   m_Layer: 0
-  m_Name: player_spawn
+  m_Name: Brush
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -112,11 +115,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8907188218389647711}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.027767, z: -0.013284}
-  m_LocalScale: {x: 0.50502, y: 0.50502, z: 0.50502}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8151530489837133558}
+  - {fileID: 1800721253579952432}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -141,7 +144,7 @@ MonoBehaviour:
     Transparency: 1
     CollisionEnabled: 1
     Model: 
-    KE_Type: 3
+    KE_Type: 0
     missing_type: 
     is_bh: 0
     Clickable: 0
@@ -173,7 +176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   brickGO: {fileID: -1189521741196552643}
   elements:
-  - {fileID: 8151530489837133558}
+  - {fileID: 1800721253579952432}
   assetGO: {fileID: 0}
 --- !u!65 &8084599068528138884
 BoxCollider:
@@ -194,5 +197,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.35, y: 3.66, z: 0.74}
+  m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
