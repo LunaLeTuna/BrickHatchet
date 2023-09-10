@@ -13,7 +13,9 @@ public class Brick
     public Color BrickColor; // Color of the brick.
     public float Transparency = 1f; // Transparency of the brick. This might be able to be replaced with BrickColor.a
     public bool CollisionEnabled = true; // Can you collide with the brick?
+    public int KeModel; // ID of model
     public string Model; // ID of the asset used for the brick
+    public int shader; // ID of shader
     public KEType KE_Type; // this determins if it's a prop or maybe a light... could be anything
     public string missing_type; // if there is no KE_Type when importing we just throw it here for export
 
@@ -92,6 +94,7 @@ public class Brick
         Brush,
         Light,
         Spawn_Point,
+        Model_static,
         Obsolete
     }
 

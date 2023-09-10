@@ -68,7 +68,17 @@ public class MapParser : MonoBehaviour
                     int id = int.Parse(line_split[1]);
                     string local = line_split[2];
                     map.TextureDictionary.Add(id, local);
-                }else if (line.StartsWith(">SLOT")) {
+                } else if (line.StartsWith(">Model_Reference")) {
+                    string[] line_split = line.Split(" ");
+                    int id = int.Parse(line_split[1]);
+                    string local = line_split[2];
+                    map.ModelDictionary.Add(id, local);
+                } else if (line.StartsWith(">Shader_Reference")) {
+                    string[] line_split = line.Split(" ");
+                    int id = int.Parse(line_split[1]);
+                    string local = line_split[2];
+                    map.ShaderDictionary.Add(id, local);
+                } else if (line.StartsWith(">SLOT")) {
                     // this line is defining an item, but those are history so ignore them
                     continue;
                 } else if (line.StartsWith(">CAMPOS")) {
@@ -97,6 +107,9 @@ public class MapParser : MonoBehaviour
                             break;
                         case "Brush":
                             brick.KE_Type = Brick.KEType.Brush;
+                            break;
+                        case "Model_static":
+                            brick.KE_Type = Brick.KEType.Model_static;
                             break;
                         case "Spawn_Point":
                             brick.KE_Type = Brick.KEType.Spawn_Point;
@@ -161,9 +174,12 @@ public class MapParser : MonoBehaviour
                 } else if (line.StartsWith("+NOCOLLISION")) {
                     // this line is defining whether or not the brick has collision
                     brick.CollisionEnabled = false;
-                } else if (line.StartsWith("+MODEL")) {
-                    // this line is defining the custom asset the brick uses
-                    brick.Model = line.Substring(7);
+                } else if (line.StartsWith("+Model")) {
+                    string[] ainfo = line.Split(" ");
+                    brick.KeModel = int.Parse(ainfo[1]);
+                } else if (line.StartsWith("+Shader")) {
+                    string[] ainfo = line.Split(" ");
+                    brick.shader = int.Parse(ainfo[1]);
                 }
             }
         }

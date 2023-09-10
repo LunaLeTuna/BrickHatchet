@@ -41,7 +41,13 @@ public class MapExporter : MonoBehaviour
             s.WriteLine(); // another blank line
 
             foreach(KeyValuePair<int, string> tesxt in input.TextureDictionary){
-                s.WriteLine($">Texture_Reference {tesxt.Key} {tesxt.Value}"); // sun intensity
+                s.WriteLine($">Texture_Reference {tesxt.Key} {tesxt.Value}");
+            }
+
+            s.WriteLine();
+
+            foreach(KeyValuePair<int, string> tesxt in input.ModelDictionary){
+                s.WriteLine($">Model_Reference {tesxt.Key} {tesxt.Value}");
             }
 
             s.WriteLine(); // more blank lines :D
@@ -320,10 +326,13 @@ public class MapExporter : MonoBehaviour
         if (b.Shape != Brick.ShapeType.cube && b.KE_Type == Brick.KEType.Legacy_Brick) export += $"\n\t+SHAPE {b.Shape.ToString()}"; // shape
         if (!b.CollisionEnabled) export += $"\n\t+NOCOLLISION"; // collision
         if (!string.IsNullOrEmpty(b.Model)) export += $"\n\t+MODEL {b.Model.RemoveNewlines()}"; // model
-        if (b.KE_Type == Brick.KEType.Brush){
+        if (b.KeModel != -1 && b.KeModel != 0) export += $"\n\t+Model {b.KeModel}"; // model
+        if (b.shader != -1 && b.shader != 0) export += $"\n\t+Shader {b.shader}"; // shader
+        if (b.KE_Type == Brick.KEType.Brush || b.KE_Type == Brick.KEType.Model_static){
             int i = 0;
             foreach(int tesxt in b.face_texture_ids){
                 i++;
+                if(tesxt != -1)
                 export += $"\n\t+Texture {i} {tesxt}";
             }
         }

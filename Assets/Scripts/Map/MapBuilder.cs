@@ -66,6 +66,11 @@ public class MapBuilder : MonoBehaviour
             MaterialCache.instance.CreateBrushTexture( (map.BaseplateColor, 1.0f, new Vector2(1.0f, 1.0f), BrickShader), ke_poject+"/textures/"+tesxt.Value, tesxt.Key);
         }
 
+        foreach(KeyValuePair<int, string> tesxt in map.ModelDictionary){
+            //Debug.Log(tesxt.Key+" and "+tesxt.Value);
+            ModelCache.instance.CreateLeModel(ke_poject+"/models/"+tesxt.Value, tesxt.Key);
+        }
+
         // create baseplate
         baseplate = new GameObject("Baseplate");
         baseplate.transform.position = map.BaseplateSize % 2 == 0 ? Vector3.zero : new Vector3(0.5f, 0f, -0.5f); // if the baseplate size is an odd number, the baseplate position needs to be offset a little for some reason
@@ -93,6 +98,9 @@ public class MapBuilder : MonoBehaviour
             }
             else if(map.Bricks[i].KE_Type == Brick.KEType.Brush){
                 CreateBrushGameObject(map.Bricks[i], 1);
+            }
+            else if(map.Bricks[i].KE_Type == Brick.KEType.Model_static){
+                CreateModeelGameObject(map.Bricks[i], 1);
             }
         }
     }
@@ -192,6 +200,50 @@ public class MapBuilder : MonoBehaviour
             MeshFilter mf = bs.elements[i].GetComponent<MeshFilter>();
             if (mf == null) continue; // skip iteration, this element doesn't have a mesh
             int submeshCount = mf.mesh.subMeshCount;
+            MeshRenderer renderer = bs.elements[i].GetComponent<MeshRenderer>();
+            Material[] brickMaterials = new Material[submeshCount];
+            brickMaterials[0] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[0]);
+            brickMaterials[1] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[1]);
+            brickMaterials[2] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[2]);
+            brickMaterials[3] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[3]);
+            brickMaterials[4] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[4]);
+            brickMaterials[5] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[5]);
+            renderer.materials = brickMaterials;
+        }
+
+        bs.UpdateShape(); // updates the shape
+        source.UpdateModel(); // sets the model
+
+        return brickGameobject;
+    }
+
+    public GameObject CreateModeelGameObject (Brick source, int Instance) {
+        GameObject brickGameobject = Instantiate(Prefabs[(int)Instance]); // get correct shape prefab using enum index
+        brickGameobject.name = source.Name;
+        brickGameobject.layer = 9;
+        source.gameObject = brickGameobject;
+
+        // Set up for BrickGO
+        BrickGO bg = brickGameobject.GetComponent<BrickGO>();
+        bg.brick = source;
+        bg.shutup = true;
+        source.brickGO = bg;
+
+        // Set up the BrickShape
+        BrickShape bs = brickGameobject.GetComponent<BrickShape>();
+        source.brickShape = bs;
+
+        // Set transform info
+        brickGameobject.transform.position = source.Position;
+        brickGameobject.transform.eulerAngles = source.Rotation;
+
+        // Set Material
+        for (int i = 0; i < bs.elements.Length; i++) {
+            MeshFilter mf = bs.elements[i].GetComponent<MeshFilter>();
+            if (mf == null) continue; // skip iteration, this element doesn't have a mesh
+            int submeshCount = mf.mesh.subMeshCount;
+            mf.mesh = ModelCache.instance.GetLeModel(source.KeModel);
+            
             MeshRenderer renderer = bs.elements[i].GetComponent<MeshRenderer>();
             Material[] brickMaterials = new Material[submeshCount];
             brickMaterials[0] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[0]);

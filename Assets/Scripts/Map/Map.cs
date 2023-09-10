@@ -21,6 +21,8 @@ public class Map
     public List<Team> Teams = new List<Team>();
 
     public Dictionary<int, string> TextureDictionary = new Dictionary<int, string>();
+    public Dictionary<int, string> ModelDictionary = new Dictionary<int, string>();
+    public Dictionary<int, string> ShaderDictionary = new Dictionary<int, string>();
 
     public Dictionary<int, object> MapElements = new Dictionary<int, object>(); // all elements in the map, accessed by their id
     public int lastID; // last id in map, because ids can get confusing once bricks get deleted and created
@@ -35,6 +37,7 @@ public class Map
         Brush,
         Brick,
         Spawn,
+        ModelStatic,
         Group
     }
 

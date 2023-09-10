@@ -151,6 +151,20 @@ public class BrickShape : MonoBehaviour
         mr.material.mainTexture = texture;
     }
 
+    public void SetModelGameobject (Mesh mesh) {
+        if (assetGO == null) {
+            assetGO = new GameObject("Asset");
+            assetGO.transform.SetParent(transform);
+            assetGO.transform.localPosition = new Vector3(0, -5, 0); // models have a bit of offset
+            assetGO.transform.localScale = new Vector3(-1, 1, -1); // models need to be flipped on x and z axis
+            assetGO.transform.localRotation = Quaternion.identity; // zero the rotation
+            assetGO.tag = "DontRecolor";
+        }
+        MeshFilter mf = assetGO.GetComponent<MeshFilter>();
+        if (mf == null) mf = assetGO.AddComponent<MeshFilter>();
+        mf.mesh = mesh;
+    }
+
     public void RemoveAssetGameobject () {
         if (assetGO != null) {
             Destroy(assetGO);
