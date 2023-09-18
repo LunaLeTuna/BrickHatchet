@@ -247,11 +247,6 @@ public class MapBuilder : MonoBehaviour
             MeshRenderer renderer = bs.elements[i].GetComponent<MeshRenderer>();
             Material[] brickMaterials = new Material[submeshCount];
             brickMaterials[0] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[0]);
-            brickMaterials[1] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[1]);
-            brickMaterials[2] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[2]);
-            brickMaterials[3] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[3]);
-            brickMaterials[4] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[4]);
-            brickMaterials[5] = MaterialCache.instance.GetBrushMaterial(source.face_texture_ids[5]);
             renderer.materials = brickMaterials;
         }
 

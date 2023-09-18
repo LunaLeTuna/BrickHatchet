@@ -52,6 +52,12 @@ public class MapExporter : MonoBehaviour
 
             s.WriteLine(); // more blank lines :D
 
+            foreach(KeyValuePair<int, string> tesxt in input.ShaderDictionary){
+                s.WriteLine($">Shader_Reference {tesxt.Key} {tesxt.Value}");
+            }
+
+            s.WriteLine(); // even more blank lines :3
+
             // now export bricks
             if (BrickBuilder) {
                 // export groups and brick
@@ -328,6 +334,7 @@ public class MapExporter : MonoBehaviour
         if (!string.IsNullOrEmpty(b.Model)) export += $"\n\t+MODEL {b.Model.RemoveNewlines()}"; // model
         if (b.KeModel != -1 && b.KeModel != 0) export += $"\n\t+Model {b.KeModel}"; // model
         if (b.shader != -1 && b.shader != 0) export += $"\n\t+Shader {b.shader}"; // shader
+        if (b.face_cam) export += $"\n\t+face_cam";
         if (b.KE_Type == Brick.KEType.Brush || b.KE_Type == Brick.KEType.Model_static){
             int i = 0;
             foreach(int tesxt in b.face_texture_ids){

@@ -181,6 +181,9 @@ public class MapParser : MonoBehaviour
                     string[] ainfo = line.Split(" ");
                     brick.shader = int.Parse(ainfo[1]);
                 }
+                else if (line.StartsWith("+face_cam")) {
+                    brick.face_cam = true;
+                }
             }
         }
 

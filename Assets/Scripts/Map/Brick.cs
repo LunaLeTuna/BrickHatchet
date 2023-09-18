@@ -16,6 +16,7 @@ public class Brick
     public int KeModel; // ID of model
     public string Model; // ID of the asset used for the brick
     public int shader; // ID of shader
+    public bool face_cam = false; // always facing cam like billbord
     public KEType KE_Type; // this determins if it's a prop or maybe a light... could be anything
     public string missing_type; // if there is no KE_Type when importing we just throw it here for export
 
