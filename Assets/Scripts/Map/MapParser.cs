@@ -114,6 +114,9 @@ public class MapParser : MonoBehaviour
                         case "Spawn_Point":
                             brick.KE_Type = Brick.KEType.Spawn_Point;
                             break;
+                        case "Script":
+                            brick.KE_Type = Brick.KEType.Script;
+                            break;
                         default:
                             brick.KE_Type = Brick.KEType.Obsolete;
                             brick.missing_type = letype;
@@ -180,8 +183,13 @@ public class MapParser : MonoBehaviour
                 } else if (line.StartsWith("+Shader")) {
                     string[] ainfo = line.Split(" ");
                     brick.shader = int.Parse(ainfo[1]);
-                }
-                else if (line.StartsWith("+face_cam")) {
+                } else if (line.StartsWith("+file")) {
+                    // this line is defining the custom asset the brick uses
+                    brick.file = line.Substring(6);
+                } else if (line.StartsWith("+fire")) {
+                    // this line is defining the custom asset the brick uses
+                    brick.fire = line.Substring(6);
+                } else if (line.StartsWith("+face_cam")) {
                     brick.face_cam = true;
                 }
             }

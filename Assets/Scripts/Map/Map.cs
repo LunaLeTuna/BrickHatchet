@@ -37,6 +37,7 @@ public class Map
         Brush,
         Brick,
         Spawn,
+        Script,
         ModelStatic,
         Group
     }

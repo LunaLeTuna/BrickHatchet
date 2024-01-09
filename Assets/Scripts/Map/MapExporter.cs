@@ -335,6 +335,8 @@ public class MapExporter : MonoBehaviour
         if (b.KeModel != -1 && b.KeModel != 0) export += $"\n\t+Model {b.KeModel}"; // model
         if (b.shader != -1 && b.shader != 0) export += $"\n\t+Shader {b.shader}"; // shader
         if (b.face_cam) export += $"\n\t+face_cam";
+        if (b.file != "") export += $"\n\t+file "+b.file;
+        if (b.fire != "") export += $"\n\t+fire "+b.fire;
         if (b.KE_Type == Brick.KEType.Brush || b.KE_Type == Brick.KEType.Model_static){
             int i = 0;
             foreach(int tesxt in b.face_texture_ids){

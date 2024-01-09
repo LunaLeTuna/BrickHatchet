@@ -19,6 +19,8 @@ public class Brick
     public bool face_cam = false; // always facing cam like billbord
     public KEType KE_Type; // this determins if it's a prop or maybe a light... could be anything
     public string missing_type; // if there is no KE_Type when importing we just throw it here for export
+    public string file; // for scripts
+    public string fire; // if a object runs a script function
 
     // brush
     public int[] face_texture_ids = {-1,-1,-1,-1,-1,-1};
@@ -96,6 +98,7 @@ public class Brick
         Light,
         Spawn_Point,
         Model_static,
+        Script,
         Obsolete
     }
 

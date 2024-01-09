@@ -599,6 +599,9 @@ public class EditorUI : MonoBehaviour
             }else if(b.KE_Type == Brick.KEType.Brush){
                 int iconID = 17;
                 he.Set(Map.ElementType.Brush, HierarchyIcons[iconID], b.Name, element, b);
+            }else if(b.KE_Type == Brick.KEType.Script){
+                int iconID = 18;
+                he.Set(Map.ElementType.Script, HierarchyIcons[iconID], b.Name, element, b);
             }else{
                 int iconID = 2 + (int)b.Shape;
                 he.Set(Map.ElementType.Brick, HierarchyIcons[iconID], b.Name, element, b);
@@ -765,6 +768,7 @@ public class EditorUI : MonoBehaviour
 
             if(element.Type == Map.ElementType.Brick ||
             element.Type == Map.ElementType.Light ||
+            element.Type == Map.ElementType.Script ||
             element.Type == Map.ElementType.Spawn ||
             element.Type == Map.ElementType.Brush) {
                 Brick b = element.AssociatedObject as Brick;
@@ -902,7 +906,7 @@ public class EditorUI : MonoBehaviour
 
         // add selection to group
         for (int i = 0; i < SelectedElements.Count; i++) {
-            if (SelectedElements[i].Type == Map.ElementType.Brick || SelectedElements[i].Type == Map.ElementType.Light) {
+            if (SelectedElements[i].Type == Map.ElementType.Brick || SelectedElements[i].Type == Map.ElementType.Light || SelectedElements[i].Type == Map.ElementType.Script) {
                 Brick b = SelectedElements[i].AssociatedObject as Brick;
                 if (b.Parent == null) { // make sure selected item doesnt already have a parent
                     targetGroup.Children.Add(b.ID);
@@ -1230,6 +1234,30 @@ public class EditorUI : MonoBehaviour
 
                 // set color picker target
                 colorPickerTarget = ColorPickerTarget.Brick;
+            } else if (lastType == Map.ElementType.Script) {
+                // show brick properties
+                ShowInspectorElements(1);
+
+                // update the elements
+                Brick b = SelectedElements[0].AssociatedObject as Brick;
+                BrickInspectorElements[0].SetString(b.Name);
+                BrickInspectorElements[1].SetVector3(b.Position);
+                BrickInspectorElements[1].SetExtraLabel(Helper.V3ToBH(b.Position, b.Scale));
+                BrickInspectorElements[2].SetVector3(b.Scale);
+                BrickInspectorElements[3].SetVector3(b.Rotation);
+                // BrickInspectorElements[4].SetColor(b.BrickColor, true);
+                colorPicker.SetColor(b.BrickColor, false); // do not invoke color changed event
+                BrickInspectorElements[5].SetInt(Mathf.RoundToInt(b.Transparency * 255));
+                BrickInspectorElements[6].SetDropdown((int)b.Shape);
+                //BrickInspectorElements[7].SetBool(b.CollisionEnabled);
+                //BrickInspectorElements[8].SetString(b.Model);
+                //BrickInspectorElements[9].SetBool(b.Clickable);
+                //BrickInspectorElements[9].SetFloat(b.ClickDistance);
+                //BrickInspectorElements[9].SetString(b.file);
+                //BrickInspectorElements[10].SetString(b.fire);
+
+                // set color picker target
+                colorPickerTarget = ColorPickerTarget.Brick;
             } else if (lastType == Map.ElementType.Group) {
                 // show group properties
                 ShowInspectorElements(2);
@@ -1286,7 +1314,7 @@ public class EditorUI : MonoBehaviour
                 }
                 
 
-            }else if (SelectedElements[i].Type == Map.ElementType.Brick || SelectedElements[i].Type == Map.ElementType.Light) {
+            }else if (SelectedElements[i].Type == Map.ElementType.Brick || SelectedElements[i].Type == Map.ElementType.Light || SelectedElements[i].Type == Map.ElementType.Script) {
                 Brick b = SelectedElements[i].AssociatedObject as Brick;
                 originalBricks.Add(new BrickData(b));
 
@@ -1334,9 +1362,13 @@ public class EditorUI : MonoBehaviour
                             BrickInspectorElements[8].SetString(b.Model); // reset inputfield to original model
                         }
                         break;
+                    // case 9:
+                    //     //b.Clickable = BrickInspectorElements[9].GetBool();
+                    //     //b.ClickDistance = BrickInspectorElements[9].GetFloat();
+                    //     break;
                     case 9:
-                        //b.Clickable = BrickInspectorElements[9].GetBool();
-                        //b.ClickDistance = BrickInspectorElements[9].GetFloat();
+                        //b.file = BrickInspectorElements[9].GetString();
+                        //b.fire = BrickInspectorElements[10].GetString();
                         break;
                 }
 

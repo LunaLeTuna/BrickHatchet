@@ -102,6 +102,9 @@ public class MapBuilder : MonoBehaviour
             else if(map.Bricks[i].KE_Type == Brick.KEType.Model_static){
                 CreateModeelGameObject(map.Bricks[i], 1);
             }
+            if(map.Bricks[i].KE_Type == Brick.KEType.Script){
+                CreateBillBoardGameObject(map.Bricks[i], 3);
+            }
         }
     }
 
